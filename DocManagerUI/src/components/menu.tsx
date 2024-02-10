@@ -19,7 +19,7 @@ import { Link } from "@mui/material";
 import AppBar from "./app-bar";
 import Drawer from "./bar-drawer";
 import DrawerHeader from "./bar-drawer-header";
-import InvoiceGrid from "./grid";
+import InvoiceGrid from "./Invoices/grid";
 import PaymentsIcon from "@mui/icons-material/Payments";
 
 type NavButton = {

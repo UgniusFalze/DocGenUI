@@ -1,12 +1,12 @@
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { GetGrid } from "../utils/invoiceGrid";
+import { GetGrid } from "../../utils/invoiceGrid";
 import { useAuth } from "react-oidc-context";
-import { Box, LinearProgress, Modal, Typography } from "@mui/material";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { InvoiceFormModal } from "./invoiceFormModal";
+import { InvoiceFormModal } from "./Form/invoiceFormModal";
+import { Dialog, DialogContent, DialogTitle, LinearProgress} from "@mui/material";
 const columns: GridColDef[] = [
   { field: "invoiceId", headerName: "ID", width: 70 },
   { field: "clientName", headerName: "Client Name", flex: 1 },
@@ -44,9 +44,10 @@ export default function InvoiceGrid() {
 
   return (
     <div>
-      <Modal open={modalOpen} onClose={handleModalClose}>
-        <InvoiceFormModal></InvoiceFormModal>
-      </Modal>
+      <Dialog open={modalOpen} onClose={handleModalClose}>
+        <DialogTitle>{"Add Invoice"}</DialogTitle>
+        <DialogContent><InvoiceFormModal closeModal={handleModalClose}/></DialogContent>
+      </Dialog>
       <div style={{ height: "100%", width: "100%" }}>
         {isLoading ? <LinearProgress /> : ""}
         <DataGrid

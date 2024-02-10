@@ -1,3 +1,4 @@
+import { Dayjs } from "dayjs"
 import { InvoiceItem } from "./invoiceItem"
 
 export type Invoice = {
@@ -12,4 +13,17 @@ export type Invoice = {
     buyerAddress: string,
     buyerCode: string,
     items: InvoiceItem[]
+}
+
+export type InvoiceForm = {
+    seriesNumber : number,
+    clientId : number | null,
+    dateOfCreation : Dayjs,
+    items : InvoiceItem[]
+}
+
+export type InvoiceGridRow = {
+    invoiceId : number,
+    invoiceDate : Date,
+    clientName : string
 }
