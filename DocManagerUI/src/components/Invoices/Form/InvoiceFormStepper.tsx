@@ -18,7 +18,7 @@ const steps = ["Create an invoice", "Add items to the invoice"];
 
 export default function InvoiceFormStepper(props:{closeModal:() => void}) {
   const [activeStep, setActiveStep] = useState(0);
-  const { control, handleSubmit, watch } = useForm<InvoiceForm>({
+  const { control, handleSubmit} = useForm<InvoiceForm>({
     defaultValues: {
       clientId: null,
       dateOfCreation: dayjs(),
@@ -30,10 +30,6 @@ export default function InvoiceFormStepper(props:{closeModal:() => void}) {
   const auth = useAuth();
 
   const formMutation = addPost(auth.user!.access_token);
-
-  if(formMutation.isSuccess){
-    props.closeModal();
-  }
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -49,6 +45,7 @@ export default function InvoiceFormStepper(props:{closeModal:() => void}) {
 
   const onSubmit: SubmitHandler<InvoiceForm> = (data) => {
     formMutation.mutate(data)
+    props.closeModal();
   };
 
   return (

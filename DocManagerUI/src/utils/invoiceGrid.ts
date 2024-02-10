@@ -3,7 +3,7 @@ import { apiUrl } from "./apiUrl";
 import { InvoiceGridRow } from "../types/invoice";
 
 export const GetGrid = async (jwt: string):Promise<Array<InvoiceGridRow>> =>{
-    const url = apiUrl + "/api/Invoice";
+    const url = apiUrl + "/Invoice";
     return await axios.get<Array<InvoiceGridRow>>(url, {
         headers:{
             Authorization: "Bearer " + jwt
