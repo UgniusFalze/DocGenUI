@@ -1,10 +1,17 @@
 import axios from "axios";
 import { Invoice } from "../types/invoice";
+import { apiUrl } from "./apiUrl";
 
-export const HandleDownload = async (invoice: Invoice) => {
-  const url = "https://localhost:7256";
+export const HandleDownload = async (invoiceId: number, jwt: string) => {
+  const url = apiUrl;
   await axios
-    .post(url + "/api/PdfDocument/downloadFile", invoice, {
+    .get(url + "/PdfDocument/downloadFile", {
+      params: {
+        invoiceId: invoiceId,
+      },
+      headers: {
+        Authorization: "Bearer " + jwt,
+      },
       responseType: "arraybuffer",
     })
     .then((response) => {
