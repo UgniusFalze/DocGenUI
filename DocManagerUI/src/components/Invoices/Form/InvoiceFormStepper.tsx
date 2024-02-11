@@ -11,23 +11,30 @@ import { FormStep } from "./steps/formStep";
 import { Container} from "@mui/material";
 import dayjs from "dayjs";
 import { useAuth } from "react-oidc-context";
-import { addPost } from "../../../utils/apiService";
+import { addPost, getSeriesNumber } from "../../../utils/apiService";
 
 const steps = ["Create an invoice", "Add items to the invoice"];
 
 
-export default function InvoiceFormStepper(props:{closeModal:() => void}) {
+export default function InvoiceFormStepper(props:{closeModal:() => void, invoiceFormNumber:number|undefined}) {
   const [activeStep, setActiveStep] = useState(0);
   const { control, handleSubmit} = useForm<InvoiceForm>({
     defaultValues: {
       clientId: null,
       dateOfCreation: dayjs(),
-      items: [],
-      seriesNumber: 1,
+      items: [{
+        name:"",
+        unitOfMeasurement: "vnt.",
+        units: 0,
+        priceOfUnit: 0
+      }],
+      seriesNumber: (props.invoiceFormNumber ?? 1) + 1,
     },
   });
 
   const auth = useAuth();
+
+  
 
   const formMutation = addPost(auth.user!.access_token);
 
@@ -42,6 +49,7 @@ export default function InvoiceFormStepper(props:{closeModal:() => void}) {
   const handleReset = () => {
     setActiveStep(0);
   };
+
 
   const onSubmit: SubmitHandler<InvoiceForm> = (data) => {
     formMutation.mutate(data)

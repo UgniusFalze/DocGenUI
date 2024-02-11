@@ -1,5 +1,5 @@
 import { Dayjs } from "dayjs"
-import { InvoiceItem } from "./invoiceItem"
+import { InvoiceItem, InvoicePostItem } from "./invoiceItem"
 
 export type Invoice = {
     invoiceId: number,
@@ -19,7 +19,7 @@ export type InvoiceForm = {
     seriesNumber : number,
     clientId : number | null,
     dateOfCreation : Dayjs,
-    items : InvoiceItem[]
+    items : InvoicePostItem[]
 }
 
 export type InvoiceGridRow = {

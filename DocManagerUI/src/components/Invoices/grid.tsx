@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { InvoiceFormModal } from "./Form/invoiceFormModal";
 import { Dialog, DialogContent, DialogTitle, LinearProgress} from "@mui/material";
+import { getSeriesNumber } from "../../utils/apiService";
 const columns: GridColDef[] = [
   { field: "invoiceId", headerName: "ID", width: 70 },
   { field: "clientName", headerName: "Client Name", flex: 1 },
@@ -38,6 +39,8 @@ export default function InvoiceGrid() {
     queryFn: () => GetGrid(user.user!.access_token),
   });
 
+  const seriesNumber = getSeriesNumber(user.user!.access_token);
+
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
@@ -46,7 +49,7 @@ export default function InvoiceGrid() {
     <div>
       <Dialog open={modalOpen} onClose={handleModalClose}>
         <DialogTitle>{"Add Invoice"}</DialogTitle>
-        <DialogContent><InvoiceFormModal closeModal={handleModalClose}/></DialogContent>
+        <DialogContent><InvoiceFormModal invoiceFormNumber={seriesNumber.data} closeModal={handleModalClose}/></DialogContent>
       </Dialog>
       <div style={{ height: "100%", width: "100%" }}>
         {isLoading ? <LinearProgress /> : ""}

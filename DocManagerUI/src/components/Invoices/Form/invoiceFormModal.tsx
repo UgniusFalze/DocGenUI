@@ -13,8 +13,8 @@ const style = {
   p: 4,
 };
 
-export const InvoiceFormModal = (props:{closeModal: () => void}) => {
+export const InvoiceFormModal = (props:{closeModal: () => void, invoiceFormNumber: number|undefined}) => {
   return (
-      <InvoiceFormStepper closeModal={props.closeModal}></InvoiceFormStepper>
+      <InvoiceFormStepper closeModal={props.closeModal} invoiceFormNumber={props.invoiceFormNumber}></InvoiceFormStepper>
   );
 };
