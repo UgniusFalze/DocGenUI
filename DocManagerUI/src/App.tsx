@@ -3,8 +3,10 @@ import { Menu } from "./components/menu";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@emotion/react";
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 function App() {
   const auth = useAuth();
@@ -28,7 +30,7 @@ function App() {
   if (auth.isAuthenticated === false) {
     auth.signinRedirect();
   } else {
-    return(
+    return (
       <QueryClientProvider client={queryClient}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <Menu></Menu>

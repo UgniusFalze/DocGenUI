@@ -1,24 +1,22 @@
 import {
-  Button,
   FormControl,
-  Grid,
   InputLabel,
   MenuItem,
-  NativeSelect,
   Select,
   Stack,
   TextField,
 } from "@mui/material";
 import { InvoiceForm } from "../../../../types/invoice";
-import { Control, Controller } from "react-hook-form";
+import { Control, Controller, get, useFormContext } from "react-hook-form";
 import { useClients } from "../../../../utils/apiService";
 import { useAuth } from "react-oidc-context";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 
 export const InvoiceInput = (props: {
   control: Control<InvoiceForm, any, InvoiceForm>;
 }) => {
   const user = useAuth();
+  const {formState} = useFormContext();
   const { isLoading, isError, data, error } = useClients(
     user.user?.access_token
   );
@@ -28,6 +26,7 @@ export const InvoiceInput = (props: {
       <Controller
         name="clientId"
         control={props.control}
+        rules={{ required: true }}
         render={({ field }) => (
           <FormControl>
             <InputLabel id="client-input-id">Client</InputLabel>
@@ -36,6 +35,7 @@ export const InvoiceInput = (props: {
               labelId="client-input-id"
               label="Client"
               value={field.value ?? ""}
+              error={!!formState.errors.clientId}
             >
               {data?.map((client) => {
                 return (
@@ -51,18 +51,26 @@ export const InvoiceInput = (props: {
       <Controller
         name="seriesNumber"
         control={props.control}
+        rules={{ required: true, min:1, }}
         render={({ field }) => (
           <FormControl>
-            <TextField {...field} label="Series Number" variant="outlined" />
+            <TextField 
+            {...field}
+            inputProps={{type:"number"}}
+            error={!!formState.errors.seriesNumber}
+            helperText={formState.errors.seriesNumber?.message?.toString()}
+            label="Series Number" 
+            variant="outlined" />
           </FormControl>
         )}
       />
       <Controller
         name="dateOfCreation"
         control={props.control}
+        rules={{ required: true }}
         render={({ field }) => (
           <FormControl>
-              <DatePicker {...field} label="Invoice Date"></DatePicker>
+            <DatePicker {...field} label="Invoice Date"></DatePicker>
           </FormControl>
         )}
       />

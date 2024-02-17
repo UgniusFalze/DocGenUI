@@ -12,18 +12,6 @@ import { Download } from "@mui/icons-material";
 import { HandleDownload } from "../../utils/documentsCrud";
 
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
-
 export default function InvoiceGrid() {
   const user = useAuth();
   const { isLoading, isError, data, error } = useQuery({
@@ -70,7 +58,7 @@ const columns: GridColDef[] = [
         <DialogContent><InvoiceFormModal invoiceFormNumber={seriesNumber.data} closeModal={handleModalClose}/></DialogContent>
       </Dialog>
       <div style={{ height: "100%", width: "100%" }}>
-        {isLoading ? <LinearProgress /> : ""}
+        {isLoading ? <LinearProgress /> : null}
         <DataGrid
           autoHeight
           rows={data ?? []}
