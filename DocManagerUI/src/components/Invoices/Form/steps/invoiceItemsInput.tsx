@@ -73,7 +73,7 @@ export const InvoiceItemInput = (props: {
               control={props.control}
             />
             <Controller
-              rules={{ required: true }}
+              rules={{ required: true, pattern:/^[0-9]*$/ }}
               render={({ field }) => (
                 <FormControl>
                   <TextField

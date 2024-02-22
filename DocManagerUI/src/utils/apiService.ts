@@ -1,6 +1,6 @@
 import { QueryClient, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { ClientSelect } from "../types/client";
-import { apiUrl, invoicesUrl } from "./apiUrl";
+import { ClientForm, ClientSelect } from "../types/client";
+import { apiUrl, clientsUrl, invoicesUrl } from "./apiUrl";
 import axios from "axios";
 import { InvoiceForm } from "../types/invoice";
 import dayjs from "dayjs";
@@ -26,6 +26,22 @@ export const useClients = (jwt:string|undefined) => {
             }else{
                 return getClients(jwt);
             }
+        }
+    })
+}
+
+export const addClient = (jwt: string) => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data:ClientForm) => {
+            return axios.post(clientsUrl, data, {
+                headers:{
+                    Authorization: "Bearer " + jwt
+                }
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey:["clientQuery"]});
         }
     })
 }

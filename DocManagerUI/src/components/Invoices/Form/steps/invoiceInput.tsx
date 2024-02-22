@@ -51,7 +51,7 @@ export const InvoiceInput = (props: {
       <Controller
         name="seriesNumber"
         control={props.control}
-        rules={{ required: true, min:1, }}
+        rules={{ required: true, min:1, pattern:/^[0-9]*$/}}
         render={({ field }) => (
           <FormControl>
             <TextField 

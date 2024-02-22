@@ -14,13 +14,15 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Navigate, Link as ReactLink, Route, Routes } from "react-router-dom";
+import { Navigate, Link as ReactLink, Route, Routes, useLocation } from "react-router-dom";
 import { Link } from "@mui/material";
 import AppBar from "./app-bar";
 import Drawer from "./bar-drawer";
 import DrawerHeader from "./bar-drawer-header";
 import InvoiceGrid from "./Invoices/grid";
 import PaymentsIcon from "@mui/icons-material/Payments";
+import GroupsIcon from "@mui/icons-material/Groups";
+import { ClientsGrid } from "./Clients/grid";
 
 type NavButton = {
   url: string;
@@ -41,11 +43,16 @@ export const Menu = () => {
   const routes: NavButton[] = [
     {
       url: "/invoices",
-      text: "Sąskaitos",
+      text: "Invoices",
       icon: <PaymentsIcon />,
     },
+    {
+      url: "/clients",
+      text: "Clients", 
+      icon: <GroupsIcon />
+    }
   ];
-
+  const location = useLocation();
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -88,8 +95,8 @@ export const Menu = () => {
                     minHeight: 48,
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
-                    active: "asd",
                   }}
+                  selected={route.url === location.pathname}
                 >
                   <ListItemIcon
                     sx={{
@@ -114,6 +121,7 @@ export const Menu = () => {
         <DrawerHeader />
         <Routes>
           <Route path="/invoices" element={<InvoiceGrid />} />
+          <Route path="/clients" element={<ClientsGrid />} />
           <Route path="*" element={<Navigate to="/invoices" />} />
         </Routes>
       </Box>
