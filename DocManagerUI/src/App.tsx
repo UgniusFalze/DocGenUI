@@ -3,14 +3,15 @@ import { Menu } from "./components/menu";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { createTheme } from "@mui/material/styles";
-import { ThemeProvider } from "@emotion/react";
+import { validUser } from "./utils/apiService";
+import { useState } from "react";
+import { RegisterForm } from "./components/User/RegisterForm";
+import WithAuthenticationRequired from "./components/auth/withAuthenticationRequired";
 
-const queryClient = new QueryClient();
 
 function App() {
   const auth = useAuth();
-  console.log(auth.user?.access_token);
+  const [isValid, setIsValid] = useState<boolean | null>(null);
 
   switch (auth.activeNavigator) {
     case "signinSilent":
@@ -18,25 +19,13 @@ function App() {
     case "signoutRedirect":
       return <div>Signing you out...</div>;
   }
-
   if (auth.isLoading) {
     return <div>Loading...</div>;
   }
-
-  if (auth.error) {
+  else if (auth.error) {
     return <div>Oops... {auth.error.message}</div>;
-  }
-
-  if (auth.isAuthenticated === false) {
-    auth.signinRedirect();
-  } else {
-    return (
-      <QueryClientProvider client={queryClient}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Menu></Menu>
-        </LocalizationProvider>
-      </QueryClientProvider>
-    );
+  }else{
+    return <WithAuthenticationRequired/>;
   }
 }
 

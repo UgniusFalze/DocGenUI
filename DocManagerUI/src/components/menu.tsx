@@ -15,7 +15,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { Navigate, Link as ReactLink, Route, Routes, useLocation } from "react-router-dom";
-import { Link } from "@mui/material";
+import { Button, Link } from "@mui/material";
 import AppBar from "./app-bar";
 import Drawer from "./bar-drawer";
 import DrawerHeader from "./bar-drawer-header";
@@ -23,6 +23,7 @@ import InvoiceGrid from "./Invoices/grid";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { ClientsGrid } from "./Clients/grid";
+import { useAuth } from "react-oidc-context";
 
 type NavButton = {
   url: string;
@@ -31,6 +32,7 @@ type NavButton = {
 };
 
 export const Menu = () => {
+  const user = useAuth();
   const theme = useTheme();
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -39,6 +41,14 @@ export const Menu = () => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const handleLogout = async () =>{
+    user.removeUser();
+    user.signoutRedirect({
+      post_logout_redirect_uri:"http://localhost:5173/"
+    });
+  }
+
   const [open, setOpen] = React.useState(false);
   const routes: NavButton[] = [
     {
@@ -56,7 +66,11 @@ export const Menu = () => {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open}>
+      <AppBar sx={{
+        display:"flex",
+        flexDirection:"row",
+        justifyContent:"space-between"
+      }} position="fixed" open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -74,6 +88,7 @@ export const Menu = () => {
             Document Management
           </Typography>
         </Toolbar>
+        <Button onClick={handleLogout}>Logout</Button>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
