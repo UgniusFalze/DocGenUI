@@ -60,7 +60,7 @@ export const ClientFormModal = (props: { closeModal: () => void }) => {
             <FormControl>
               <TextField
                 {...field}
-                label="Client's Addres"
+                label="Client's Address"
                 error={!!clientForm.formState.errors.buyerAddress}
                 variant="outlined"
                 fullWidth

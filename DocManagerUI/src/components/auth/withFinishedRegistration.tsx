@@ -3,6 +3,7 @@ import { useAuth } from "react-oidc-context";
 import { validUser } from "../../utils/apiService";
 import { RegisterForm } from "../User/RegisterForm";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LoadingAuth } from "../loadingAuth";
 
 const queryClient = new QueryClient();
 export function withFinishedRegistration<T extends JSX.IntrinsicAttributes>(
@@ -21,7 +22,7 @@ export function withFinishedRegistration<T extends JSX.IntrinsicAttributes>(
     }, []);
 
     if (isLoading) {
-      return <div>Loading...</div>;
+      return <LoadingAuth/>;
     } else {
       if (isValid) {
         return (

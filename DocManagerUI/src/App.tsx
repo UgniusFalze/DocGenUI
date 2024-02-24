@@ -7,7 +7,7 @@ import { validUser } from "./utils/apiService";
 import { useState } from "react";
 import { RegisterForm } from "./components/User/RegisterForm";
 import WithAuthenticationRequired from "./components/auth/withAuthenticationRequired";
-
+import { LoadingAuth } from "./components/loadingAuth";
 
 function App() {
   const auth = useAuth();
@@ -15,17 +15,16 @@ function App() {
 
   switch (auth.activeNavigator) {
     case "signinSilent":
-      return <div>Signing you in...</div>;
+      return <LoadingAuth />;
     case "signoutRedirect":
-      return <div>Signing you out...</div>;
+      return <LoadingAuth />;
   }
   if (auth.isLoading) {
-    return <div>Loading...</div>;
-  }
-  else if (auth.error) {
+    return <LoadingAuth />;
+  } else if (auth.error) {
     return <div>Oops... {auth.error.message}</div>;
-  }else{
-    return <WithAuthenticationRequired/>;
+  } else {
+    return <WithAuthenticationRequired />;
   }
 }
 

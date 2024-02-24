@@ -1,6 +1,6 @@
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
-import { useClients } from "../../utils/apiService";
+import { getGridClients } from "../../utils/apiService";
 import {
   Dialog,
   DialogContent,
@@ -14,31 +14,40 @@ import { ClientFormModal } from "./Form/clientsFormModal";
 
 export const ClientsGrid = () => {
   const user = useAuth();
-  const [formModalOpen, setFormModalOpen] = useState<boolean>(false);
-  const { isLoading, data } = useClients(user.user?.access_token);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const { isLoading, data } = getGridClients(user.user?.access_token);
   const columns: GridColDef[] = [
     { field: "clientId", headerName: "ID", width: 70 },
-    { field: "clientName", headerName: "Client Name", flex: 1 },
+    { field: "buyerName", headerName: "Client's Name", flex:0.5},
+    {field: "buyerAddress", headerName: "Client's Address", flex:1},
+    {field: "buyerCode", headerName:"Client's registration code", flex:1}
   ];
-  const handleModalOpen = () => setFormModalOpen(true);
-  const handleModalClose = () => setFormModalOpen(false);
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
+  const handleFormModalOpen = () => {
+    handleModalOpen();
+  };
 
   return (
     <div>
       <Dialog
         fullWidth={true}
         maxWidth={"sm"}
-        open={formModalOpen}
+        open={modalOpen}
         onClose={handleModalClose}
       >
         <DialogTitle>{"Add Client"}</DialogTitle>
         <DialogContent>
-          <ClientFormModal closeModal={handleModalClose}/>
+          <ClientFormModal closeModal={handleModalClose} />
         </DialogContent>
       </Dialog>
       <div style={{ height: "100%", width: "100%" }}>
         {isLoading ? <LinearProgress /> : null}
         <DataGrid
+          disableRowSelectionOnClick
           autoHeight
           rows={data ?? []}
           columns={columns}
@@ -52,7 +61,7 @@ export const ClientsGrid = () => {
         />
       </div>
       <Fab
-        onClick={() => handleModalOpen()}
+        onClick={() => handleFormModalOpen()}
         sx={{
           position: "fixed",
           bottom: 0,

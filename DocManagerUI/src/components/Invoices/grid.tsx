@@ -74,6 +74,7 @@ export default function InvoiceGrid() {
       <div style={{ height: "100%", width: "100%" }}>
         {isLoading ? <LinearProgress /> : null}
         <DataGrid
+          disableRowSelectionOnClick
           autoHeight
           rows={data ?? []}
           columns={columns}

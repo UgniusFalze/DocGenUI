@@ -3,6 +3,7 @@ import { withAuthenticationRequired } from "react-oidc-context";
 import { Menu } from "../menu";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { withFinishedRegistration } from "./withFinishedRegistration";
+import { LoadingAuth } from "../loadingAuth";
 const PrivateRoute = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -16,5 +17,5 @@ const registeredRoute = () => {
 };
 
 export default withAuthenticationRequired(registeredRoute(), {
-  OnRedirecting: () => <div>Redirecting to the login page...</div>,
+  OnRedirecting: () => <LoadingAuth/>
 });

@@ -4,7 +4,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { ClientForm, ClientSelect } from "../types/client";
+import { ClientForm,  ClientGridRow,  ClientSelect } from "../types/client";
 import { apiUrl, clientsUrl, invoicesUrl, userUrl } from "./apiUrl";
 import axios from "axios";
 import { InvoiceForm } from "../types/invoice";
@@ -13,7 +13,7 @@ import utc from "dayjs/plugin/utc";
 import { UserForm } from "../types/user";
 
 const getClients = async (jwt: string): Promise<Array<ClientSelect>> => {
-  const url = apiUrl + "/Client";
+  const url = apiUrl + "/Client/select";
   return await axios
     .get<Array<ClientSelect>>(url, {
       headers: {
@@ -25,6 +25,21 @@ const getClients = async (jwt: string): Promise<Array<ClientSelect>> => {
     })
     .catch((error) => Promise.reject(error));
 };
+
+export const getGridClients = (jwt:string|undefined) => {
+  return useQuery({
+    queryKey:["gridClientQuery"],
+    queryFn : () => {
+      return axios.get<Array<ClientGridRow>>(clientsUrl, {
+        headers:{
+          Authorization: "Bearer " + jwt
+        }
+      }).then((result) => {
+        return result.data;
+      }).catch((error) => Promise.reject(error));
+    }
+  })
+}
 
 export const useClients = (jwt: string | undefined) => {
   return useQuery({
