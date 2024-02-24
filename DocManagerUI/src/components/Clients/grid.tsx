@@ -1,4 +1,4 @@
-import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
+import { DataGrid, GridColDef} from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
 import { getGridClients } from "../../utils/apiService";
 import {

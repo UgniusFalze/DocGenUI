@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Invoice } from "../types/invoice";
 import { apiUrl } from "./apiUrl";
 
 export const HandleDownload = async (invoiceId: number, jwt: string) => {
