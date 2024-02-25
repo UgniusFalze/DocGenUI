@@ -12,7 +12,8 @@ export type Invoice = {
     buyerName: string,
     buyerAddress: string,
     buyerCode: string,
-    items: InvoiceItem[]
+    totalMoney:string,
+    products: InvoiceItem[]
 }
 
 export type InvoiceForm = {

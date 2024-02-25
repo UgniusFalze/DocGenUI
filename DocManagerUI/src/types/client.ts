@@ -7,7 +7,7 @@ export type ClientForm = {
     buyerName: string,
     buyerAddress: string,
     buyerCode: number
-    vatCode: string|undefined
+    vatCode: string|null
 }
 
 export type ClientGridRow = ClientForm & {

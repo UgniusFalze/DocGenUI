@@ -12,13 +12,16 @@ export const ClientFormModal = (props: { closeModal: () => void }) => {
       buyerName: "",
       buyerAddress: "",
       buyerCode: 0,
-      vatCode:undefined
+      vatCode:""
     },
+    mode:"onChange"
   });
 
   const formMutation = addClient(auth.user!.access_token);
 
-  const onSubmit: SubmitHandler<ClientForm> = (data) => {
+  const onSubmit: SubmitHandler<ClientForm> = async (data) => {
+    const _ = clientForm.formState.errors;
+    await clientForm.trigger();
     if (clientForm.formState.isValid) {
       formMutation.mutate(data);
     }
@@ -93,6 +96,7 @@ export const ClientFormModal = (props: { closeModal: () => void }) => {
                 {...field}
                 label="Client's VAT code (optional)"
                 variant="outlined"
+                error={!!clientForm.formState.errors.vatCode}
                 fullWidth
               />
             </FormControl>

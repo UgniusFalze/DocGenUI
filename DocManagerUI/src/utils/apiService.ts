@@ -1,5 +1,4 @@
 import {
-  QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
@@ -7,7 +6,7 @@ import {
 import { ClientForm,  ClientGridRow,  ClientSelect } from "../types/client";
 import { apiUrl, clientsUrl, invoicesUrl, userUrl } from "./apiUrl";
 import axios from "axios";
-import { InvoiceForm } from "../types/invoice";
+import { Invoice, InvoiceForm } from "../types/invoice";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { UserForm } from "../types/user";
@@ -58,6 +57,7 @@ export const addClient = (jwt: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ClientForm) => {
+      console.log(data);
       return axios.post(clientsUrl, data, {
         headers: {
           Authorization: "Bearer " + jwt,
@@ -67,6 +67,9 @@ export const addClient = (jwt: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clientQuery"] });
     },
+    onError:(error) =>{
+      console.error(error);
+    }
   });
 };
 
@@ -143,4 +146,32 @@ export const addUser = (jwt:string|undefined) => {
       )
     },
   })
+}
+
+export const getInvoice = (jwt:string| undefined, invoiceId:string|undefined) => {
+  const url = invoicesUrl + "/" + invoiceId;
+  return useQuery({
+    queryKey: ["invoice", invoiceId, jwt],
+    queryFn: () => {
+      return axios
+        .get<Invoice>(url, {
+          headers: {
+            Authorization: "Bearer " + jwt,
+          },
+        })
+        .then((result) => {
+          const invoiceItems = result.data.products.map((product, index) => {
+            return {
+              ...product,
+              invoiceItemId:index + 1
+            }
+          })
+          return {
+            ...result.data,
+            products: invoiceItems
+          };
+        })
+        .catch((error) => Promise.reject(error));
+    },
+  });
 }

@@ -2,6 +2,7 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
+  GridEventListener,
   GridRowId,
 } from "@mui/x-data-grid";
 import { GetGrid } from "../../utils/invoiceGrid";
@@ -20,9 +21,11 @@ import {
 import { getSeriesNumber } from "../../utils/apiService";
 import { Download } from "@mui/icons-material";
 import { HandleDownload } from "../../utils/documentsCrud";
+import { useNavigate } from "react-router-dom";
 
 export default function InvoiceGrid() {
   const user = useAuth();
+  const navigate = useNavigate();
   const { isLoading, isError, data, error } = useQuery({
     queryKey: ["invoicesGrid", user.user?.access_token],
     queryFn: () => GetGrid(user.user!.access_token),
@@ -59,6 +62,9 @@ export default function InvoiceGrid() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
+  const handleInvoiceView:GridEventListener<"rowClick"> = (data) => {
+    navigate("/invoices/"+data.id);
+  }
 
   return (
     <div>
@@ -75,6 +81,7 @@ export default function InvoiceGrid() {
         {isLoading ? <LinearProgress /> : null}
         <DataGrid
           disableRowSelectionOnClick
+          onRowClick={handleInvoiceView}
           autoHeight
           rows={data ?? []}
           columns={columns}

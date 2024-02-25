@@ -24,6 +24,7 @@ import PaymentsIcon from "@mui/icons-material/Payments";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { ClientsGrid } from "./Clients/grid";
 import { useAuth } from "react-oidc-context";
+import { InvoiceView } from "./Invoices/View/invoiceView";
 
 type NavButton = {
   url: string;
@@ -136,6 +137,7 @@ export const Menu = () => {
         <DrawerHeader />
         <Routes>
           <Route path="/invoices" element={<InvoiceGrid />} />
+          <Route path="/invoices/:id" element={<InvoiceView/>}/>
           <Route path="/clients" element={<ClientsGrid />} />
           <Route path="*" element={<Navigate to="/invoices" />} />
         </Routes>
