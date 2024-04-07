@@ -25,6 +25,23 @@ const getClients = async (jwt: string): Promise<Array<ClientSelect>> => {
     .catch((error) => Promise.reject(error));
 };
 
+const getClient = async (jwt:string, id: number) : Promise<ClientForm> => {
+  const url = apiUrl + "/Client/" + id;
+  return await axios
+  .get<ClientForm>(url, {
+    headers: {
+      Authorization: "Bearer " + jwt,
+    },
+  })
+  .then((result) => {
+    return {
+      ...result.data,
+      vatCode: result.data.vatCode ?? ""
+    }
+  })
+  .catch((error) => Promise.reject(error));
+}
+
 export const getGridClients = (jwt:string|undefined) => {
   return useQuery({
     queryKey:["gridClientQuery"],
@@ -52,6 +69,19 @@ export const useClients = (jwt: string | undefined) => {
     },
   });
 };
+
+export const useClient = (jwt:string|undefined, id: number) => {
+  return useQuery({
+    queryKey: ["clientView", id],
+    queryFn: () => {
+      if (jwt === undefined) {
+        return undefined;
+      } else {
+        return getClient(jwt, id);
+      }
+    },
+  });
+}
 
 export const addClient = (jwt: string) => {
   const queryClient = useQueryClient();
