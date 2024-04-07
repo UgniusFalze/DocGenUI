@@ -17,6 +17,7 @@ import {
   DialogContent,
   DialogTitle,
   LinearProgress,
+  Typography,
 } from "@mui/material";
 import { getSeriesNumber } from "../../utils/apiService";
 import { Download } from "@mui/icons-material";
@@ -78,8 +79,10 @@ export default function InvoiceGrid() {
         </DialogContent>
       </Dialog>
       <div style={{ height: "100%", width: "100%" }}>
+        <Typography gutterBottom variant="h3">Invoices</Typography>
         {isLoading ? <LinearProgress /> : null}
         <DataGrid
+          
           disableRowSelectionOnClick
           onRowClick={handleInvoiceView}
           autoHeight
