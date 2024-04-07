@@ -42,7 +42,7 @@ export const InvoiceView = () => {
   return (
     <Stack direction="row" sx={{height: "90vh"}} spacing={2}>
       <div>
-        <Typography gutterBottom variant="h1">
+        <Typography gutterBottom variant="h3">
           Invoice
         </Typography>
         <Stack spacing={2} divider={<Divider />}>
