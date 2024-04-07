@@ -7,6 +7,7 @@ import {
   DialogTitle,
   Fab,
   LinearProgress,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
@@ -45,6 +46,7 @@ export const ClientsGrid = () => {
         </DialogContent>
       </Dialog>
       <div style={{ height: "100%", width: "100%" }}>
+      <Typography gutterBottom variant="h3">Clients</Typography>
         {isLoading ? <LinearProgress /> : null}
         <DataGrid
           disableRowSelectionOnClick
