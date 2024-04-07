@@ -4,16 +4,12 @@ import { ClientForm } from "../../../types/client";
 import { addClient } from "../../../utils/apiService";
 import { useAuth } from "react-oidc-context";
 import { useEffect } from "react";
+import { getDefaultClientForm } from "./form";
 
 export const ClientFormModal = (props: { closeModal: () => void }) => {
   const auth = useAuth();
   const clientForm = useForm<ClientForm>({
-    defaultValues: {
-      buyerName: "",
-      buyerAddress: "",
-      buyerCode: 0,
-      vatCode:""
-    },
+    defaultValues: getDefaultClientForm(),
     mode:"onChange"
   });
 
