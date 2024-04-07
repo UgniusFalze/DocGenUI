@@ -33,7 +33,7 @@ export function withFinishedRegistration<T extends JSX.IntrinsicAttributes>(
       } else {
         return (
           <QueryClientProvider client={queryClient}>
-            <RegisterForm />;
+            <RegisterForm setValid={setIsValid} />;
           </QueryClientProvider>
         );
       }

@@ -14,9 +14,12 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { UserForm } from "../../types/user";
 import { useAuth } from "react-oidc-context";
 import { addUser } from "../../utils/apiService";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-export const RegisterForm = () => {
+export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction<boolean>>}) => {
   const user = useAuth();
+  const navigate = useNavigate();
   const formMutation = addUser(user.user?.access_token);
   const userRegisterForm = useForm<UserForm>({
     defaultValues: {
@@ -35,7 +38,15 @@ export const RegisterForm = () => {
     });
   };
 
-  const onSubmit: SubmitHandler<UserForm> = (data) => {
+  useEffect(() => {
+    if (formMutation.isSuccess) {
+      props.setValid(true);
+    }
+  }, [formMutation.isSuccess]);
+
+  const onSubmit: SubmitHandler<UserForm> = async(data) => {
+    const _ = userRegisterForm.formState.errors;
+    await userRegisterForm.trigger();
     if (userRegisterForm.formState.isValid) {
       formMutation.mutate(data);
     }
