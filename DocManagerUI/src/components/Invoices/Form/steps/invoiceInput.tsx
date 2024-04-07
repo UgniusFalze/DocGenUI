@@ -13,7 +13,7 @@ import { useAuth } from "react-oidc-context";
 import { DatePicker } from "@mui/x-date-pickers";
 
 export const InvoiceInput = (props: {
-  control: Control<InvoiceForm, any, InvoiceForm>;
+  control: Control<InvoiceForm>;
 }) => {
   const user = useAuth();
   const {formState} = useFormContext();

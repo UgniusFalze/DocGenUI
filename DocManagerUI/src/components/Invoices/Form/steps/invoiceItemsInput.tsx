@@ -9,7 +9,7 @@ import { FormControl, IconButton, Stack, TextField } from "@mui/material";
 import { AddCircle, RemoveCircle } from "@mui/icons-material";
 
 export const InvoiceItemInput = (props: {
-  control: Control<InvoiceForm, any, InvoiceForm>;
+  control: Control<InvoiceForm>;
 }) => {
   const { fields, append, remove } = useFieldArray({
     control: props.control,
