@@ -23,6 +23,7 @@ import { getSeriesNumber } from "../../utils/apiService";
 import { Download } from "@mui/icons-material";
 import { HandleDownload } from "../../utils/documentsCrud";
 import { useNavigate } from "react-router-dom";
+import { GridModal } from "../modals/gridModal";
 
 export default function InvoiceGrid() {
   const user = useAuth();
@@ -63,26 +64,34 @@ export default function InvoiceGrid() {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
-  const handleInvoiceView:GridEventListener<"rowClick"> = (data) => {
-    navigate("/invoices/"+data.id);
-  }
+  const handleInvoiceView: GridEventListener<"rowClick"> = (data) => {
+    navigate("/invoices/" + data.id);
+  };
+
+  const handleContentClose = () => {
+    return;
+  };
 
   return (
     <div>
-      <Dialog open={modalOpen} onClose={handleModalClose}>
-        <DialogTitle>{"Add Invoice"}</DialogTitle>
-        <DialogContent>
+      <GridModal
+        isModalOpen={modalOpen}
+        handleModalClose={handleModalClose}
+        handleContentClose={handleContentClose}
+        title="Add Invoice"
+        modalContent={
           <InvoiceFormModal
             invoiceFormNumber={seriesNumber.data}
             closeModal={handleModalClose}
           />
-        </DialogContent>
-      </Dialog>
+        }
+      ></GridModal>
       <div style={{ height: "100%", width: "100%" }}>
-        <Typography gutterBottom variant="h3">Invoices</Typography>
+        <Typography gutterBottom variant="h3">
+          Invoices
+        </Typography>
         {isLoading ? <LinearProgress /> : null}
         <DataGrid
-          
           disableRowSelectionOnClick
           onRowClick={handleInvoiceView}
           autoHeight
