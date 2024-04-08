@@ -1,10 +1,7 @@
-import { DataGrid, GridColDef, GridEventListener } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridEventListener, useGridApiRef } from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
 import { getGridClients } from "../../utils/apiService";
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
   Fab,
   LinearProgress,
   Typography,
@@ -16,6 +13,7 @@ import { GridModal } from "../modals/gridModal";
 import { ClientEditFormModal } from "./Form/clientEditFormModal";
 
 export const ClientsGrid = () => {
+  const apiRef = useGridApiRef();
   const user = useAuth();
   const { isLoading, data } = getGridClients(user.user?.access_token);
   const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
@@ -37,14 +35,14 @@ export const ClientsGrid = () => {
 
   const handleFormModalOpen = () => {
     setModalTitle("Add Client");
-    setGridModal(<ClientFormModal closeModal={handleModalClose}></ClientFormModal>);
+    setGridModal(<ClientFormModal closeModal={handleModalClose} addClient={apiRef.current.updateRows}></ClientFormModal>);
     setIsModalOpen(true);
   };
 
   const handleClientEditFormModal :GridEventListener<"rowClick"> = (data) => {
     const id = Number.parseInt(data.id.toString());
     setModalTitle("Edit Client");
-    setGridModal(<ClientEditFormModal closeModal={handleModalClose} clientId={id}></ClientEditFormModal>);
+    setGridModal(<ClientEditFormModal  closeModal={handleModalClose} clientId={id} updateClient={apiRef.current.updateRows}></ClientEditFormModal>);
     setIsModalOpen(true);
   };
 
@@ -63,6 +61,7 @@ export const ClientsGrid = () => {
         </Typography>
         {isLoading ? <LinearProgress /> : null}
         <DataGrid
+          apiRef={apiRef} 
           disableRowSelectionOnClick
           autoHeight
           onRowClick={handleClientEditFormModal}

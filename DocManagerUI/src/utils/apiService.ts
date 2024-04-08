@@ -87,7 +87,6 @@ export const addClient = (jwt: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ClientForm) => {
-      console.log(data);
       return axios.post(clientsUrl, data, {
         headers: {
           Authorization: "Bearer " + jwt,
@@ -102,6 +101,25 @@ export const addClient = (jwt: string) => {
     }
   });
 };
+
+export const editClient = (jwt: string, id:number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data:ClientForm) => {
+      return axios.put(clientsUrl + "/" + id, data, {
+        headers: {
+          Authorization: "Bearer " + jwt,
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clientQuery"] });
+    },
+    onError:(error) =>{
+      console.error(error);
+    }
+  })
+}
 
 export const addPost = (jwt: string) => {
   const queryClient = useQueryClient();

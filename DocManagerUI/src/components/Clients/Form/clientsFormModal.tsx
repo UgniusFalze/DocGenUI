@@ -5,8 +5,9 @@ import { addClient } from "../../../utils/apiService";
 import { useAuth } from "react-oidc-context";
 import { useEffect } from "react";
 import { getDefaultClientForm } from "./form";
+import { GridRowModelUpdate } from "@mui/x-data-grid";
 
-export const ClientFormModal = (props: { closeModal: () => void }) => {
+export const ClientFormModal = (props: { closeModal: () => void, addClient: (updates: GridRowModelUpdate[]) => void }) => {
   const auth = useAuth();
   const clientForm = useForm<ClientForm>({
     defaultValues: getDefaultClientForm(),
@@ -25,6 +26,8 @@ export const ClientFormModal = (props: { closeModal: () => void }) => {
 
   useEffect(() => {
     if (formMutation.isSuccess) {
+      const response = formMutation.data;
+      props.addClient([{...response.data}]);
       props.closeModal();
     }
   }, [formMutation.isSuccess]);

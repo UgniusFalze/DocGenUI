@@ -1,11 +1,13 @@
 import { Box, Button, FormControl, Stack, TextField } from "@mui/material";
 import { ClientForm } from "../../../types/client";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "react-oidc-context";
-import { useClient } from "../../../utils/apiService";
+import { editClient, useClient } from "../../../utils/apiService";
 import { getDefaultClientForm } from "./form";
+import { useEffect } from "react";
+import { GridRowModelUpdate } from "@mui/x-data-grid";
 
-export const ClientEditFormModal = (props: { closeModal: () => void , clientId: number}) => {
+export const ClientEditFormModal = (props: { closeModal: () => void , clientId: number, updateClient : (updates: GridRowModelUpdate[]) => void}) => {
     const auth = useAuth();
     const client = useClient(auth.user!.access_token, props.clientId);
     const clientForm = useForm<ClientForm>({
@@ -15,9 +17,26 @@ export const ClientEditFormModal = (props: { closeModal: () => void , clientId: 
     });
 
 
+    const formMutation = editClient(auth.user!.access_token, props.clientId);
+
+    const onSubmit: SubmitHandler<ClientForm> = async (data) => {
+      const _ = clientForm.formState.errors;
+      await clientForm.trigger();
+      if (clientForm.formState.isValid) {
+        formMutation.mutate(data);
+      }
+    };
+  
+    useEffect(() => {
+      if (formMutation.isSuccess) {
+        props.updateClient([{clientId: props.clientId, ...clientForm.getValues()}]);
+        props.closeModal();
+      }
+    }, [formMutation.isSuccess]);
+
 
     return (
-        <form>
+        <form onSubmit={clientForm.handleSubmit(onSubmit)}>
       <Stack
         sx={{ width: "100%", padding: "5px" }}
         direction="column"
