@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogTitle } from "@mui/material";
 export const GridModal = (props: {
   isModalOpen: boolean;
   handleModalClose: () => void;
+  handleContentClose: () => void;
   title: string;
   modalContent: JSX.Element | null;
 }) => {
@@ -10,8 +11,11 @@ export const GridModal = (props: {
     <Dialog
       fullWidth={true}
       maxWidth={"sm"}
-      open={props.isModalOpen}
       onClose={props.handleModalClose}
+      open={props.isModalOpen}
+      TransitionProps={{
+        onExited: () => props.handleContentClose()
+      }}
     >
       <DialogTitle>{props.title}</DialogTitle>
       <DialogContent>

@@ -19,6 +19,7 @@ export const ClientsGrid = () => {
   const user = useAuth();
   const { isLoading, data } = getGridClients(user.user?.access_token);
   const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>("");
   const columns: GridColDef[] = [
     { field: "clientId", headerName: "ID", width: 70 },
@@ -27,25 +28,32 @@ export const ClientsGrid = () => {
     { field: "buyerCode", headerName: "Client's registration code", flex: 1 },
   ];
   const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleContentClose = () => {
     setGridModal(null);
   };
 
   const handleFormModalOpen = () => {
     setModalTitle("Add Client");
-    setGridModal(<ClientFormModal closeModal={handleModalClose}></ClientFormModal>)
+    setGridModal(<ClientFormModal closeModal={handleModalClose}></ClientFormModal>);
+    setIsModalOpen(true);
   };
 
   const handleClientEditFormModal :GridEventListener<"rowClick"> = (data) => {
     const id = Number.parseInt(data.id.toString());
     setModalTitle("Edit Client");
-    setGridModal(<ClientEditFormModal closeModal={handleModalClose} clientId={id}></ClientEditFormModal>)
+    setGridModal(<ClientEditFormModal closeModal={handleModalClose} clientId={id}></ClientEditFormModal>);
+    setIsModalOpen(true);
   };
 
   return (
     <div>
       <GridModal
-        isModalOpen={gridModal !== null}
+        isModalOpen={isModalOpen}
         handleModalClose={handleModalClose}
+        handleContentClose={handleContentClose}
         title={modalTitle}
         modalContent={gridModal}
       ></GridModal>
