@@ -2,7 +2,7 @@ import { Box, Button, FormControl, Stack, TextField } from "@mui/material";
 import { ClientForm } from "../../../types/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "react-oidc-context";
-import { editClient, useClient } from "../../../utils/apiService";
+import { useEditClient, useClient } from "../../../utils/apiService";
 import { getDefaultClientForm } from "./form";
 import { useEffect } from "react";
 import { GridRowModelUpdate } from "@mui/x-data-grid";
@@ -17,7 +17,7 @@ export const ClientEditFormModal = (props: { closeModal: () => void , clientId: 
     });
 
 
-    const formMutation = editClient(auth.user!.access_token, props.clientId);
+    const formMutation = useEditClient(auth.user!.access_token, props.clientId);
 
     const onSubmit: SubmitHandler<ClientForm> = async (data) => {
       const _ = clientForm.formState.errors;

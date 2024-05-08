@@ -1,6 +1,6 @@
 import { DataGrid, GridColDef, GridEventListener, useGridApiRef } from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
-import { getGridClients } from "../../utils/apiService";
+import { useGetGridClients } from "../../utils/apiService";
 import {
   Fab,
   LinearProgress,
@@ -15,7 +15,7 @@ import { ClientEditFormModal } from "./Form/clientEditFormModal";
 export const ClientsGrid = () => {
   const apiRef = useGridApiRef();
   const user = useAuth();
-  const { isLoading, data } = getGridClients(user.user?.access_token);
+  const { isLoading, data } = useGetGridClients(user.user?.access_token);
   const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>("");

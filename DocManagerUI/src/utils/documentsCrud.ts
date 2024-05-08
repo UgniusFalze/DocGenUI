@@ -3,7 +3,7 @@ import { apiUrl } from "./apiUrl";
 
 export const HandleDownload = async (invoiceId: number, jwt: string) => {
   await createFileObjectUrl(invoiceId, jwt).then((url) => {
-    let filename = "document.pdf";
+    const filename = "document.pdf";
     const link = document.createElement("a");
     link.href = url;
     link.setAttribute("download", filename);

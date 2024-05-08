@@ -13,13 +13,10 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { InvoiceFormModal } from "./Form/invoiceFormModal";
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
   LinearProgress,
   Typography,
 } from "@mui/material";
-import { getSeriesNumber } from "../../utils/apiService";
+import { useGetSeriesNumber } from "../../utils/apiService";
 import { Download } from "@mui/icons-material";
 import { HandleDownload } from "../../utils/documentsCrud";
 import { useNavigate } from "react-router-dom";
@@ -28,7 +25,7 @@ import { GridModal } from "../modals/gridModal";
 export default function InvoiceGrid() {
   const user = useAuth();
   const navigate = useNavigate();
-  const { isLoading, isError, data, error } = useQuery({
+  const { isLoading, data} = useQuery({
     queryKey: ["invoicesGrid", user.user?.access_token],
     queryFn: () => GetGrid(user.user!.access_token),
   });
@@ -59,7 +56,7 @@ export default function InvoiceGrid() {
     },
   ];
 
-  const seriesNumber = getSeriesNumber(user.user!.access_token);
+  const seriesNumber = useGetSeriesNumber(user.user!.access_token);
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const handleModalOpen = () => setModalOpen(true);

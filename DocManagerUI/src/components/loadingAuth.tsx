@@ -1,4 +1,4 @@
-import { CssBaseline, Typography } from "@mui/material";
+import { CssBaseline } from "@mui/material";
 
 export const LoadingAuth = () => {
   return (

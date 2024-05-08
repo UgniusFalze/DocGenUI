@@ -1,5 +1,5 @@
 import { useAuth } from "react-oidc-context";
-import { getInvoice } from "../../../utils/apiService";
+import { useGetInvoice } from "../../../utils/apiService";
 import { useParams } from "react-router-dom";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
@@ -26,7 +26,7 @@ const columns: GridColDef[] = [
 export const InvoiceView = () => {
   const auth = useAuth();
   const { id } = useParams();
-  const invoice = getInvoice(auth.user?.access_token, id);
+  const invoice = useGetInvoice(auth.user?.access_token, id);
   const [data, setData] = useState<string|undefined>(undefined);
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { Box, Button, FormControl, Stack, TextField } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ClientForm } from "../../../types/client";
-import { addClient } from "../../../utils/apiService";
+import { useAddClient } from "../../../utils/apiService";
 import { useAuth } from "react-oidc-context";
 import { useEffect } from "react";
 import { getDefaultClientForm } from "./form";
@@ -14,7 +14,7 @@ export const ClientFormModal = (props: { closeModal: () => void, addClient: (upd
     mode:"onChange"
   });
 
-  const formMutation = addClient(auth.user!.access_token);
+  const formMutation = useAddClient(auth.user!.access_token);
 
   const onSubmit: SubmitHandler<ClientForm> = async (data) => {
     const _ = clientForm.formState.errors;

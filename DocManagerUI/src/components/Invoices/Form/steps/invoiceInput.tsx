@@ -7,7 +7,7 @@ import {
   TextField,
 } from "@mui/material";
 import { InvoiceForm } from "../../../../types/invoice";
-import { Control, Controller, get, useFormContext } from "react-hook-form";
+import { Control, Controller, useFormContext } from "react-hook-form";
 import { useClients } from "../../../../utils/apiService";
 import { useAuth } from "react-oidc-context";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -17,7 +17,7 @@ export const InvoiceInput = (props: {
 }) => {
   const user = useAuth();
   const {formState} = useFormContext();
-  const { isLoading, isError, data, error } = useClients(
+  const { data } = useClients(
     user.user?.access_token
   );
 

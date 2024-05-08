@@ -42,7 +42,7 @@ const getClient = async (jwt:string, id: number) : Promise<ClientForm> => {
   .catch((error) => Promise.reject(error));
 }
 
-export const getGridClients = (jwt:string|undefined) => {
+export const useGetGridClients = (jwt:string|undefined) => {
   return useQuery({
     queryKey:["gridClientQuery"],
     queryFn : () => {
@@ -83,7 +83,7 @@ export const useClient = (jwt:string|undefined, id: number) => {
   });
 }
 
-export const addClient = (jwt: string) => {
+export const useAddClient = (jwt: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ClientForm) => {
@@ -102,7 +102,7 @@ export const addClient = (jwt: string) => {
   });
 };
 
-export const editClient = (jwt: string, id:number) => {
+export const useEditClient = (jwt: string, id:number) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data:ClientForm) => {
@@ -121,7 +121,7 @@ export const editClient = (jwt: string, id:number) => {
   })
 }
 
-export const addPost = (jwt: string) => {
+export const useAddPost = (jwt: string) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: InvoiceForm) => {
@@ -146,7 +146,7 @@ export const addPost = (jwt: string) => {
   });
 };
 
-export const getSeriesNumber = (jwt: string) => {
+export const useGetSeriesNumber = (jwt: string) => {
   const url = invoicesUrl + "/last";
   return useQuery({
     queryKey: ["latestSeriesNumber"],
@@ -180,7 +180,7 @@ export const validUser = (jwt: string|undefined) => {
     .catch((error) => Promise.reject(error));
 };
 
-export const addUser = (jwt:string|undefined) => {
+export const useAddUser = (jwt:string|undefined) => {
   return useMutation({
     mutationFn: (data: UserForm) => {
       return axios.post(
@@ -196,7 +196,7 @@ export const addUser = (jwt:string|undefined) => {
   })
 }
 
-export const getInvoice = (jwt:string| undefined, invoiceId:string|undefined) => {
+export const useGetInvoice = (jwt:string| undefined, invoiceId:string|undefined) => {
   const url = invoicesUrl + "/" + invoiceId;
   return useQuery({
     queryKey: ["invoice", invoiceId, jwt],
