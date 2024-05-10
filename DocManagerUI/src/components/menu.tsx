@@ -25,6 +25,7 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import { ClientsGrid } from "./Clients/grid";
 import { useAuth } from "react-oidc-context";
 import { InvoiceView } from "./Invoices/View/invoiceView";
+import { getRedirectUriFromLogin } from "../utils/envProvider";
 
 type NavButton = {
   url: string;
@@ -46,7 +47,7 @@ export const Menu = () => {
   const handleLogout = async () =>{
     user.removeUser();
     user.signoutRedirect({
-      post_logout_redirect_uri:"http://localhost:5173/"
+      post_logout_redirect_uri:getRedirectUriFromLogin()
     });
   }
 

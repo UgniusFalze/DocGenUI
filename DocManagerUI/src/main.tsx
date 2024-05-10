@@ -3,6 +3,7 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material";
 import { AuthProvider, AuthProviderProps } from "react-oidc-context";
+import { getLoginServiceUrl, getRedirectUriFromLogin } from "./utils/envProvider.ts";
 
 const darkTheme = createTheme({
   palette: {
@@ -27,9 +28,9 @@ const darkTheme = createTheme({
 });
 
 const oidConfig: AuthProviderProps = {
-  authority: "http://localhost:8080/realms/DocsManagement",
+  authority: getLoginServiceUrl(),
   client_id: "DocsManagementReact",
-  redirect_uri: "http://localhost:5173",
+  redirect_uri: getRedirectUriFromLogin(),
   response_type: "code",
   scope: "openid",
   onSigninCallback: () => {

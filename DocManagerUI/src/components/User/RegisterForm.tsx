@@ -15,6 +15,7 @@ import { UserForm } from "../../types/user";
 import { useAuth } from "react-oidc-context";
 import { useAddUser } from "../../utils/apiService";
 import { useEffect } from "react";
+import { getRedirectUriFromLogin } from "../../utils/envProvider";
 
 export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction<boolean>>}) => {
   const user = useAuth();
@@ -32,7 +33,7 @@ export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction
   const handleLogout = async () => {
     user.removeUser();
     user.signoutRedirect({
-      post_logout_redirect_uri: "http://localhost:5173/",
+      post_logout_redirect_uri: getRedirectUriFromLogin(),
     });
   };
 
