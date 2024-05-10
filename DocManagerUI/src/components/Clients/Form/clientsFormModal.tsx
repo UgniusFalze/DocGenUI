@@ -17,7 +17,7 @@ export const ClientFormModal = (props: { closeModal: () => void, addClient: (upd
   const formMutation = useAddClient(auth.user!.access_token);
 
   const onSubmit: SubmitHandler<ClientForm> = async (data) => {
-    const _ = clientForm.formState.errors;
+    //const _ = clientForm.formState.errors;
     await clientForm.trigger();
     if (clientForm.formState.isValid) {
       formMutation.mutate(data);

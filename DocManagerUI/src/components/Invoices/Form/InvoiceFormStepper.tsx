@@ -11,7 +11,7 @@ import { FormStep } from "./steps/formStep";
 import { Container } from "@mui/material";
 import dayjs from "dayjs";
 import { useAuth } from "react-oidc-context";
-import { addPost } from "../../../utils/apiService";
+import { useAddPost } from "../../../utils/apiService";
 
 const steps = ["Create an invoice", "Add items to the invoice"];
 
@@ -44,7 +44,7 @@ export default function InvoiceFormStepper(props: {
 
   const auth = useAuth();
 
-  const formMutation = addPost(auth.user!.access_token);
+  const formMutation = useAddPost(auth.user!.access_token);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);

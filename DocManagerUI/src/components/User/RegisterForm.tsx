@@ -43,7 +43,7 @@ export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction
   }, [formMutation.isSuccess]);
 
   const onSubmit: SubmitHandler<UserForm> = async(data) => {
-    const _ = userRegisterForm.formState.errors;
+    //const _ = userRegisterForm.formState.errors;
     await userRegisterForm.trigger();
     if (userRegisterForm.formState.isValid) {
       formMutation.mutate(data);

@@ -20,7 +20,7 @@ export const ClientEditFormModal = (props: { closeModal: () => void , clientId: 
     const formMutation = useEditClient(auth.user!.access_token, props.clientId);
 
     const onSubmit: SubmitHandler<ClientForm> = async (data) => {
-      const _ = clientForm.formState.errors;
+      //const _ = clientForm.formState.errors;
       await clientForm.trigger();
       if (clientForm.formState.isValid) {
         formMutation.mutate(data);
