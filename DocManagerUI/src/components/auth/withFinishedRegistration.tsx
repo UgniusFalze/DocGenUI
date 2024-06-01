@@ -13,7 +13,6 @@ export function withFinishedRegistration<T extends JSX.IntrinsicAttributes>(
     const auth = useAuth();
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isValid, setIsValid] = useState<boolean>(false);
-    console.log(auth.user?.access_token);
     useEffect(() => {
       validUser(auth.user?.access_token).then((valid) => {
         setIsValid(valid);

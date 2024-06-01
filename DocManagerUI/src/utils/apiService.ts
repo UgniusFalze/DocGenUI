@@ -95,9 +95,6 @@ export const useAddClient = (jwt: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clientQuery"] });
-    },
-    onError:(error) =>{
-      console.error(error);
     }
   });
 };

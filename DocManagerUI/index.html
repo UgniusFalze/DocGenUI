@@ -6,8 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Invoice's Management</title>
   </head>
-  <body>
+  <body id="body" style="background:rgb(18, 18, 18)">
     <div id="root"></div>
+    <script type="text/javascript">
+      window.onload = function () {
+          setTimeout(function() {
+              document.getElementById("body").style = "";        
+          }, 200);
+      }
+  </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

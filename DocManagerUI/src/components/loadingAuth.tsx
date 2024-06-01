@@ -4,7 +4,6 @@ export const LoadingAuth = () => {
   return (
     <>
       <CssBaseline />
-      Loading...
     </>
   );
 };
