@@ -1,13 +1,13 @@
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { withAuthenticationRequired } from "react-oidc-context";
-import { Menu } from "../menu";
+import { AppMenu } from "../menu";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { withFinishedRegistration } from "./withFinishedRegistration";
 import { LoadingAuth } from "../loadingAuth";
 const PrivateRoute = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <Menu></Menu>
+      <AppMenu></AppMenu>
     </LocalizationProvider>
   );
 };

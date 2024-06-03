@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -14,8 +14,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Navigate, Link as ReactLink, Route, Routes, useLocation } from "react-router-dom";
-import { Button, Link } from "@mui/material";
+import { Navigate, Link as ReactLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Avatar, Link, MenuItem, MenuList } from "@mui/material";
 import AppBar from "./app-bar";
 import Drawer from "./bar-drawer";
 import DrawerHeader from "./bar-drawer-header";
@@ -26,6 +26,8 @@ import { ClientsGrid } from "./Clients/grid";
 import { useAuth } from "react-oidc-context";
 import { InvoiceView } from "./Invoices/View/invoiceView";
 import { getRedirectUriFromLogin } from "../utils/envProvider";
+import Menu  from '@mui/material/Menu';
+import { AccountCircle, Logout, Settings } from "@mui/icons-material";
 
 type NavButton = {
   url: string;
@@ -33,9 +35,12 @@ type NavButton = {
   icon: JSX.Element;
 };
 
-export const Menu = () => {
+export const AppMenu = () => {
   const user = useAuth();
   const theme = useTheme();
+  const navigate = useNavigate();
+  const [popperOpen, setPopperOpen] = useState<boolean>(false);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -44,12 +49,29 @@ export const Menu = () => {
     setOpen(false);
   };
 
-  const handleLogout = async () =>{
+  const handleLogout = async () => {
     user.removeUser();
     user.signoutRedirect({
-      post_logout_redirect_uri:getRedirectUriFromLogin()
+      post_logout_redirect_uri: getRedirectUriFromLogin()
     });
   }
+
+  const navigateToProfile = () => {
+    navigate('/profile');
+  }
+
+
+  const onPopperClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+    setPopperOpen(!popperOpen);
+  }
+
+  const onPopperClose = () => {
+    setAnchorEl(null);
+    setPopperOpen(false);
+  }
+
+  const id = popperOpen ? 'simple-popper' : undefined;
 
   const [open, setOpen] = React.useState(false);
   const routes: NavButton[] = [
@@ -60,7 +82,7 @@ export const Menu = () => {
     },
     {
       url: "/clients",
-      text: "Clients", 
+      text: "Clients",
       icon: <GroupsIcon />
     }
   ];
@@ -69,12 +91,70 @@ export const Menu = () => {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       <AppBar sx={{
-        display:"flex",
-        flexDirection:"row",
-        justifyContent:"space-between"
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
       }} position="fixed" open={open}>
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={popperOpen}
+          onClose={onPopperClose}
+          onClick={onPopperClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              '&::before': {
+                content: '""',
+                display: 'block',
+                position: 'absolute',
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: 'background.paper',
+                transform: 'translateY(-50%) rotate(45deg)',
+                zIndex: 0,
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+
+          <MenuList>
+            <MenuItem>
+              <Avatar /> Profile
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={navigateToProfile}>
+              <ListItemIcon>
+                <Settings fontSize="small" />
+              </ListItemIcon>
+              Settings
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <ListItemIcon>
+                <Logout fontSize="small" />
+              </ListItemIcon>
+              Logout
+            </MenuItem>
+          </MenuList>
+
+        </Menu>
         <Toolbar>
           <IconButton
+            aria-describedby={id}
             color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
@@ -90,7 +170,13 @@ export const Menu = () => {
             Document Management
           </Typography>
         </Toolbar>
-        <Button onClick={handleLogout}>Logout</Button>
+        <Avatar sx={{ marginRight: "1rem" }}>
+          <IconButton
+            onClick={onPopperClick}
+          >
+            <AccountCircle></AccountCircle>
+          </IconButton>
+        </Avatar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
         <DrawerHeader>
@@ -138,8 +224,9 @@ export const Menu = () => {
         <DrawerHeader />
         <Routes>
           <Route path="/invoices" element={<InvoiceGrid />} />
-          <Route path="/invoices/:id" element={<InvoiceView/>}/>
+          <Route path="/invoices/:id" element={<InvoiceView />} />
           <Route path="/clients" element={<ClientsGrid />} />
+          <Route path="/profile" element={<div></div>} />
           <Route path="*" element={<Navigate to="/invoices" />} />
         </Routes>
       </Box>
