@@ -6,7 +6,7 @@ import { useAuth } from "react-oidc-context";
 import { useEffect, useState } from "react";
 import { getDefaultClientForm } from "./form";
 import { GridRowModelUpdate } from "@mui/x-data-grid";
-import { ErrorToast } from "../../errors/ErrorToast";
+import { ErrorToast } from "../../toasts/ErrorToast";
 
 export const ClientFormModal = (props: { closeModal: () => void, addClient: (updates: GridRowModelUpdate[]) => void }) => {
   const [hasError, setHasError] = useState<boolean>(false);

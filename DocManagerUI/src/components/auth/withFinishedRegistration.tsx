@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "react-oidc-context";
 import { validUser } from "../../utils/apiService";
-import { RegisterForm } from "../User/RegisterForm";
+import { RegisterForm } from "../User/form/RegisterForm";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LoadingAuth } from "../loadingAuth";
 

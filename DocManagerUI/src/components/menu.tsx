@@ -28,6 +28,7 @@ import { InvoiceView } from "./Invoices/View/invoiceView";
 import { getRedirectUriFromLogin } from "../utils/envProvider";
 import Menu  from '@mui/material/Menu';
 import { AccountCircle, Logout, Settings } from "@mui/icons-material";
+import { ViewProfile } from "./User/viewProfile";
 
 type NavButton = {
   url: string;
@@ -226,7 +227,7 @@ export const AppMenu = () => {
           <Route path="/invoices" element={<InvoiceGrid />} />
           <Route path="/invoices/:id" element={<InvoiceView />} />
           <Route path="/clients" element={<ClientsGrid />} />
-          <Route path="/profile" element={<div></div>} />
+          <Route path="/profile" element={<ViewProfile></ViewProfile>} />
           <Route path="*" element={<Navigate to="/invoices" />} />
         </Routes>
       </Box>

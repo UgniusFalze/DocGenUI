@@ -11,11 +11,11 @@ import {
   Typography,
 } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { UserForm } from "../../types/user";
+import { UserForm } from "../../../types/user";
 import { useAuth } from "react-oidc-context";
-import { useAddUser } from "../../utils/apiService";
+import { useAddUser } from "../../../utils/apiService";
 import { useEffect } from "react";
-import { getRedirectUriFromLogin } from "../../utils/envProvider";
+import { getRedirectUriFromLogin } from "../../../utils/envProvider";
 
 export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction<boolean>>}) => {
   const user = useAuth();

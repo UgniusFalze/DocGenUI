@@ -9,7 +9,7 @@ import axios from "axios";
 import { Invoice, InvoiceForm } from "../types/invoice";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
-import { UserForm } from "../types/user";
+import { UserForm, UserProfile } from "../types/user";
 
 const getClients = async (jwt: string): Promise<Array<ClientSelect>> => {
   const url = apiUrl + "/Client/select";
@@ -218,5 +218,46 @@ export const useGetInvoice = (jwt:string| undefined, invoiceId:string|undefined)
         })
         .catch((error) => Promise.reject(error));
     },
+  });
+}
+
+export const useUserProfile = (jwt:string|undefined) => {
+  return useQuery({
+    queryKey: ["userProfile"],
+    queryFn : () => {
+      return axios
+        .get<UserProfile>(userUrl, {
+          headers: {
+            Authorization: "Bearer " + jwt,
+          }
+        })
+        .then((result) => {
+          return result.data;
+        })
+        .catch((error) => Promise.reject(error))
+    }
+  })
+}
+
+export const useEditUser =  (jwt:string|undefined) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: UserForm) => {
+      return axios.put(
+        userUrl,
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + jwt,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey : ["userProfile"]});
+    },
+    onError: (error) =>{
+      console.error(error);
+    }
   });
 }
