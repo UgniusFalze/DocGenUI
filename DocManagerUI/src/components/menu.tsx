@@ -14,8 +14,8 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Navigate, Link as ReactLink, Route, Routes, useLocation, useNavigate } from "react-router-dom";
-import { Avatar, Link, MenuItem, MenuList } from "@mui/material";
+import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Avatar, MenuItem, MenuList } from "@mui/material";
 import AppBar from "./app-bar";
 import Drawer from "./bar-drawer";
 import DrawerHeader from "./bar-drawer-header";
@@ -70,6 +70,10 @@ export const AppMenu = () => {
   const onPopperClose = () => {
     setAnchorEl(null);
     setPopperOpen(false);
+  }
+
+  const navigateToMenuItem = (menuItem: string) => {
+    navigate(menuItem);
   }
 
   const id = popperOpen ? 'simple-popper' : undefined;
@@ -193,7 +197,6 @@ export const AppMenu = () => {
         <List>
           {routes.map((route) => (
             <ListItem key={route.text} disablePadding sx={{ display: "block" }}>
-              <Link component={ReactLink} to={route.url}>
                 <ListItemButton
                   sx={{
                     minHeight: 48,
@@ -201,6 +204,7 @@ export const AppMenu = () => {
                     px: 2.5,
                   }}
                   selected={route.url === location.pathname}
+                  onClick={() => navigateToMenuItem(route.url)}
                 >
                   <ListItemIcon
                     sx={{
@@ -216,7 +220,6 @@ export const AppMenu = () => {
                     sx={{ opacity: open ? 1 : 0 }}
                   />
                 </ListItemButton>
-              </Link>
             </ListItem>
           ))}
         </List>

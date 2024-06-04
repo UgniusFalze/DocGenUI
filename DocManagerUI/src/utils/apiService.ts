@@ -10,6 +10,7 @@ import { Invoice, InvoiceForm } from "../types/invoice";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { UserForm, UserProfile } from "../types/user";
+import { InvoicePostItem } from "../types/invoiceItem";
 
 const getClients = async (jwt: string): Promise<Array<ClientSelect>> => {
   const url = apiUrl + "/Client/select";
@@ -255,6 +256,29 @@ export const useEditUser =  (jwt:string|undefined) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey : ["userProfile"]});
+    },
+    onError: (error) =>{
+      console.error(error);
+    }
+  });
+}
+
+export const useAddInvoiceItem =  (jwt:string|undefined, invoiceId: number | null | undefined) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: InvoicePostItem) => {
+      return axios.post(
+        invoicesUrl + '/' + invoiceId + '/addItem',
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + jwt,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey : ["invoice", invoiceId, jwt]});
     },
     onError: (error) =>{
       console.error(error);

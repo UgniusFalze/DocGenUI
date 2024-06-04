@@ -1,9 +1,9 @@
 import { useAuth } from "react-oidc-context";
 import { useGetInvoice } from "../../../utils/apiService";
 import { useParams } from "react-router-dom";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, useGridApiRef } from "@mui/x-data-grid";
 import {
-  Container,
+  Button,
   Divider,
   Grid,
   LinearProgress,
@@ -14,6 +14,8 @@ import { InvoiceCard } from "./invoiceCard";
 import { PdfFile } from "./pdfFile";
 import { useEffect, useState } from "react";
 import { createFileObjectUrl } from "../../../utils/documentsCrud";
+import { GridModal } from "../../modals/gridModal";
+import { InvoiceItemInput } from "./invoiceAddItemForm";
 
 const columns: GridColDef[] = [
   { field: "invoiceItemId", headerName: "ID", width: 70 },
@@ -25,10 +27,14 @@ const columns: GridColDef[] = [
 ];
 
 export const InvoiceView = () => {
+  const apiRef = useGridApiRef();
   const auth = useAuth();
   const { id } = useParams();
   const invoice = useGetInvoice(auth.user?.access_token, id);
   const [data, setData] = useState<string|undefined>(undefined);
+  const [itemModalOpen, setItemModalOpen] = useState<boolean>(false);
+  const [successfullAdd, setSuccessfullAdd] = useState<boolean>(false);
+  const [addButtonVisible, setAddButtonVisible] = useState<boolean>(false);
 
   useEffect(() => {
     if(id !== undefined){
@@ -36,13 +42,41 @@ export const InvoiceView = () => {
         setData(data);
       })
     }
-  }, [id]);
+  }, [id, successfullAdd]);
 
+  useEffect(() => {
+      if(invoice.isFetched){
+        setAddButtonVisible(true);
+      }
+  }, [invoice.isFetching])
 
+  const closeModal = () => {
+    setItemModalOpen(false);
+  }
+
+  const updateGrid = (valid:boolean) => {
+    if(valid){
+      invoice.refetch();
+      setData(undefined);
+      setSuccessfullAdd(true);
+      closeModal();
+    }
+  }
+
+  const update = () => {
+
+  }
 
   return (
-    <Grid container direction="row" sx={{height: "90vh"}} spacing={2}>
-      <Container maxWidth="md">
+    <Grid container justifyContent={"center"} direction="row" spacing={2}>
+      <GridModal 
+        isModalOpen={itemModalOpen} 
+        handleModalClose={closeModal} 
+        handleContentClose={update} 
+        title="Add Item"
+        modalContent={<InvoiceItemInput setValid={updateGrid} invoiceId={Number.parseInt(id ?? '')}></InvoiceItemInput>}>
+        </GridModal>
+      <Grid item maxWidth="md">
         <Typography gutterBottom variant="h3">
           Invoice
         </Typography>
@@ -64,8 +98,10 @@ export const InvoiceView = () => {
               subTitle="EUR"
             />
           </Stack>
-          <div style={{ height: "100%", width: "100%" }}>
+          <div style={{ display:"flex", flexDirection:"column", height: "100%", width: "100%" }}>
+            {addButtonVisible ?<Button variant="contained" sx={{marginBottom:"0.5rem", alignSelf:"end"}} onClick={() => setItemModalOpen(true)}>Add Item</Button>:<></>}
             <DataGrid
+              apiRef={apiRef}
               disableRowSelectionOnClick
               autoHeight
               rows={invoice.data?.products ?? []}
@@ -81,10 +117,10 @@ export const InvoiceView = () => {
             />
           </div>
         </Stack>
-      </Container>
-      <Container fixed  sx={{minWidth:"60%"}}>
+      </Grid>
+      <Grid item sx={{minWidth:"60%", height: "90vh"}} >
         {data !== undefined ? <PdfFile data={data} /> : <LinearProgress sx={{width:'100%'}} />}
-      </Container>
+      </Grid>
     </Grid>
   );
 };
