@@ -1,18 +1,18 @@
+
 image: node
 
-stages:          # List of stages for jobs, and their order of execution
-  - build
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+stages:          
   - test
 
-build-job:       # This job runs in the build stage, which runs first.
-  stage: build
-  script:
-    - echo "Compiling the code..."
-    - echo "Compile complete."
-
-lint-test-job:   # This job also runs in the test stage.
-  stage: test    # It can run at the same time as unit-test-job (in parallel).
+lint-test-job:  
+  stage: test    
   script:
     - cd DocManagerUI  
     - npm i eslint
     - node_modules/eslint/bin/eslint.js .
+
