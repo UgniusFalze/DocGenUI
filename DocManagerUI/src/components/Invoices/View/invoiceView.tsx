@@ -5,6 +5,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   Container,
   Divider,
+  Grid,
   LinearProgress,
   Stack,
   Typography,
@@ -40,8 +41,8 @@ export const InvoiceView = () => {
 
 
   return (
-    <Stack direction="row" sx={{height: "90vh"}} spacing={2}>
-      <div>
+    <Grid container direction="row" sx={{height: "90vh"}} spacing={2}>
+      <Container maxWidth="md">
         <Typography gutterBottom variant="h3">
           Invoice
         </Typography>
@@ -80,10 +81,10 @@ export const InvoiceView = () => {
             />
           </div>
         </Stack>
-      </div>
-      <Container maxWidth="xl">
+      </Container>
+      <Container fixed  sx={{minWidth:"60%"}}>
         {data !== undefined ? <PdfFile data={data} /> : <LinearProgress sx={{width:'100%'}} />}
       </Container>
-    </Stack>
+    </Grid>
   );
 };

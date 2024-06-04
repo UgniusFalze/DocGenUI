@@ -6,11 +6,10 @@ import { useAuth } from "react-oidc-context";
 import { SuccessToast } from "../toasts/SuccessToast";
 import { useEffect, useState } from "react";
 import { getLoginServiceUrl } from "../../utils/envProvider";
-import { useLocation } from "react-router-dom";
+import { ErrorToast } from "../toasts/ErrorToast";
 
 export const ViewProfile = () => {
     const user = useAuth();
-    let location = useLocation();
     const formMutation = useEditUser(user.user?.access_token);
     const userProfile = useUserProfile(user.user!.access_token);
     const [successfullSubmit, setSuccessfullSubmit] = useState<boolean>(false);
@@ -59,6 +58,7 @@ export const ViewProfile = () => {
             }}
         >
             <SuccessToast open={successfullSubmit} onClose={() => setSuccessfullSubmit(false)} />
+            <ErrorToast open={hasError}/>
             <Stack
                 sx={{
                     height: "min-content",
