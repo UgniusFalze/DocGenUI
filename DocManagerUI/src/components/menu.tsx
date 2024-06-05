@@ -203,7 +203,7 @@ export const AppMenu = () => {
                     justifyContent: open ? "initial" : "center",
                     px: 2.5,
                   }}
-                  selected={route.url === location.pathname}
+                  selected={route.url === '/' + location.pathname.split('/')[1]}
                   onClick={() => navigateToMenuItem(route.url)}
                 >
                   <ListItemIcon
