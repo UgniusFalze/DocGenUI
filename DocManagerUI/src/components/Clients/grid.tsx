@@ -1,7 +1,8 @@
-import { DataGrid, GridColDef, GridEventListener, useGridApiRef } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, useGridApiRef } from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
 import { useGetGridClients } from "../../utils/apiService";
 import {
+  Box,
   Fab,
   LinearProgress,
   Typography,
@@ -11,19 +12,32 @@ import AddIcon from "@mui/icons-material/Add";
 import { ClientFormModal } from "./Form/clientsFormModal";
 import { GridModal } from "../modals/gridModal";
 import { ClientEditFormModal } from "./Form/clientEditFormModal";
+import { Delete, WarningOutlined} from "@mui/icons-material";
+import { ClientDeleteModal } from "./Form/clientDeleteModal";
 
 export const ClientsGrid = () => {
   const apiRef = useGridApiRef();
   const user = useAuth();
-  const { isLoading, data } = useGetGridClients(user.user?.access_token);
+  const { isFetching, data } = useGetGridClients(user.user?.access_token);
   const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [modalTitle, setModalTitle] = useState<string>("");
+  const [modalTitle, setModalTitle] = useState<string|JSX.Element>("");
   const columns: GridColDef[] = [
     { field: "clientId", headerName: "ID", width: 70 },
     { field: "buyerName", headerName: "Client's Name", flex: 0.5 },
     { field: "buyerAddress", headerName: "Client's Address", flex: 1 },
     { field: "buyerCode", headerName: "Client's registration code", flex: 1 },
+    {
+      field: "actions",
+      type: "actions",
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Delete />}
+          label="DeleteItem"
+          onClick={() => handleClientDeleteModalOpen(params.id)}
+        />,
+      ],
+    },
   ];
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -46,6 +60,13 @@ export const ClientsGrid = () => {
     setIsModalOpen(true);
   };
 
+  const handleClientDeleteModalOpen = (id: any) => {
+    const clientId = Number.parseInt(id.toString());
+    setModalTitle(<Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}><WarningOutlined fontSize="large"></WarningOutlined></Box>);
+    setGridModal(<ClientDeleteModal handleModalClose={handleModalClose} id={clientId} updateClient={apiRef.current.updateRows}></ClientDeleteModal>);
+    setIsModalOpen(true);
+  }
+
   return (
     <div>
       <GridModal
@@ -59,7 +80,7 @@ export const ClientsGrid = () => {
         <Typography gutterBottom variant="h3">
           Clients
         </Typography>
-        {isLoading ? <LinearProgress /> : null}
+        {isFetching ? <LinearProgress /> : null}
         <DataGrid
           apiRef={apiRef} 
           disableRowSelectionOnClick

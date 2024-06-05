@@ -4,7 +4,7 @@ export const GridModal = (props: {
   isModalOpen: boolean;
   handleModalClose: () => void;
   handleContentClose: () => void;
-  title: string;
+  title: string | JSX.Element;
   modalContent: JSX.Element | null;
 }) => {
   return (

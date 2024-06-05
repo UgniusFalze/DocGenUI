@@ -119,6 +119,25 @@ export const useEditClient = (jwt: string, id:number) => {
   })
 }
 
+export const useDeleteClient = (jwt: string, id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => {
+      return axios.delete(clientsUrl + "/" + id, {
+        headers: {
+          Authorization: "Bearer " + jwt,
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clientQuery"] });
+    },
+    onError:(error) =>{
+      console.error(error);
+    }
+  })
+}
+
 export const useAddPost = (jwt: string) => {
   const queryClient = useQueryClient();
   return useMutation({
