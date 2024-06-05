@@ -25,7 +25,7 @@ import { GridModal } from "../modals/gridModal";
 export default function InvoiceGrid() {
   const user = useAuth();
   const navigate = useNavigate();
-  const { isLoading, data} = useQuery({
+  const { isFetching, data} = useQuery({
     queryKey: ["invoicesGrid", user.user?.access_token],
     queryFn: () => GetGrid(user.user!.access_token),
   });
@@ -87,7 +87,7 @@ export default function InvoiceGrid() {
         <Typography gutterBottom variant="h3">
           Invoices
         </Typography>
-        {isLoading ? <LinearProgress /> : null}
+        {isFetching ? <LinearProgress /> : null}
         <DataGrid
           disableRowSelectionOnClick
           onRowClick={handleInvoiceView}
