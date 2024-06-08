@@ -1,4 +1,4 @@
-import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridPaginationModel, useGridApiRef } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridPaginationModel, GridRowId, GridRowParams, useGridApiRef } from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
 import { useCountGridClients, useGetGridClients } from "../../utils/apiService";
 import {
@@ -38,7 +38,7 @@ export const ClientsGrid = () => {
         <GridActionsCellItem
           icon={<Delete />}
           label="DeleteItem"
-          onClick={() => handleClientDeleteModalOpen(params.id)}
+          onClick={() => handleClientDeleteModalOpen(Number.parseInt(params.id.toString()))}
         />,
       ],
     },
@@ -64,10 +64,9 @@ export const ClientsGrid = () => {
     setIsModalOpen(true);
   };
 
-  const handleClientDeleteModalOpen = (id: any) => {
-    const clientId = Number.parseInt(id.toString());
+  const handleClientDeleteModalOpen = (id: number) => {
     setModalTitle(<Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}><WarningOutlined fontSize="large"></WarningOutlined></Box>);
-    setGridModal(<ClientDeleteModal handleModalClose={handleModalClose} id={clientId} updateClient={refetchData}></ClientDeleteModal>);
+    setGridModal(<ClientDeleteModal handleModalClose={handleModalClose} id={id} updateClient={refetchData}></ClientDeleteModal>);
     setIsModalOpen(true);
   }
 
