@@ -1,9 +1,9 @@
-import { DataGrid, GridColDef, GridEventListener, useGridApiRef } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridPaginationModel, useGridApiRef } from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
-import { useGetGridClients } from "../../utils/apiService";
+import { useCountGridClients, useGetGridClients } from "../../utils/apiService";
 import {
+  Box,
   Fab,
-  LinearProgress,
   Typography,
 } from "@mui/material";
 import { useState } from "react";
@@ -11,19 +11,37 @@ import AddIcon from "@mui/icons-material/Add";
 import { ClientFormModal } from "./Form/clientsFormModal";
 import { GridModal } from "../modals/gridModal";
 import { ClientEditFormModal } from "./Form/clientEditFormModal";
+import { Delete, WarningOutlined} from "@mui/icons-material";
+import { ClientDeleteModal } from "./Form/clientDeleteModal";
 
 export const ClientsGrid = () => {
   const apiRef = useGridApiRef();
   const user = useAuth();
-  const { isLoading, data } = useGetGridClients(user.user?.access_token);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 10,
+  });
+  const { isFetching, data, refetch } = useGetGridClients(user.user?.access_token, paginationModel.page);
+  const { data: gridCount, refetch: refetchCount} = useCountGridClients(user.user?.access_token);
   const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [modalTitle, setModalTitle] = useState<string>("");
+  const [modalTitle, setModalTitle] = useState<string|JSX.Element>("");
   const columns: GridColDef[] = [
     { field: "clientId", headerName: "ID", width: 70 },
     { field: "buyerName", headerName: "Client's Name", flex: 0.5 },
     { field: "buyerAddress", headerName: "Client's Address", flex: 1 },
     { field: "buyerCode", headerName: "Client's registration code", flex: 1 },
+    {
+      field: "actions",
+      type: "actions",
+      getActions: (params) => [
+        <GridActionsCellItem
+          icon={<Delete />}
+          label="DeleteItem"
+          onClick={() => handleClientDeleteModalOpen(Number.parseInt(params.id.toString()))}
+        />,
+      ],
+    },
   ];
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -35,7 +53,7 @@ export const ClientsGrid = () => {
 
   const handleFormModalOpen = () => {
     setModalTitle("Add Client");
-    setGridModal(<ClientFormModal closeModal={handleModalClose} addClient={apiRef.current.updateRows}></ClientFormModal>);
+    setGridModal(<ClientFormModal closeModal={handleModalClose} addClient={refetchData}></ClientFormModal>);
     setIsModalOpen(true);
   };
 
@@ -45,6 +63,18 @@ export const ClientsGrid = () => {
     setGridModal(<ClientEditFormModal  closeModal={handleModalClose} clientId={id} updateClient={apiRef.current.updateRows}></ClientEditFormModal>);
     setIsModalOpen(true);
   };
+
+  const handleClientDeleteModalOpen = (id: number) => {
+    setModalTitle(<Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}><WarningOutlined fontSize="large"></WarningOutlined></Box>);
+    setGridModal(<ClientDeleteModal handleModalClose={handleModalClose} id={id} updateClient={refetchData}></ClientDeleteModal>);
+    setIsModalOpen(true);
+  }
+
+  const refetchData = () => {
+    refetchCount();
+    refetch();
+  }
+
 
   return (
     <div>
@@ -59,7 +89,6 @@ export const ClientsGrid = () => {
         <Typography gutterBottom variant="h3">
           Clients
         </Typography>
-        {isLoading ? <LinearProgress /> : null}
         <DataGrid
           apiRef={apiRef} 
           disableRowSelectionOnClick
@@ -68,12 +97,12 @@ export const ClientsGrid = () => {
           rows={data ?? []}
           columns={columns}
           getRowId={(row) => row.clientId}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 15 },
-            },
-          }}
-          pageSizeOptions={[15, 25]}
+          loading={isFetching}
+          rowCount={gridCount ?? 0}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          paginationMode="server"
+
         />
       </div>
       <Fab

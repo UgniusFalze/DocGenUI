@@ -6,7 +6,7 @@ export type ClientSelect = {
 export type ClientForm = {
     buyerName: string,
     buyerAddress: string,
-    buyerCode: number
+    buyerCode: string
     vatCode: string|null
 }
 

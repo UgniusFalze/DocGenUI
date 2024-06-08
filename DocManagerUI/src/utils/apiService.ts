@@ -1,4 +1,5 @@
 import {
+  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -10,6 +11,7 @@ import { Invoice, InvoiceForm } from "../types/invoice";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { UserForm, UserProfile } from "../types/user";
+import { InvoicePostItem } from "../types/invoiceItem";
 
 const getClients = async (jwt: string): Promise<Array<ClientSelect>> => {
   const url = apiUrl + "/Client/select";
@@ -42,18 +44,38 @@ const getClient = async (jwt:string, id: number) : Promise<ClientForm> => {
   .catch((error) => Promise.reject(error));
 }
 
-export const useGetGridClients = (jwt:string|undefined) => {
+export const useGetGridClients = (jwt:string|undefined, page: number) => {
   return useQuery({
-    queryKey:["gridClientQuery"],
+    queryKey:["gridClientQuery", page],
     queryFn : () => {
       return axios.get<Array<ClientGridRow>>(clientsUrl, {
         headers:{
           Authorization: "Bearer " + jwt
+        },
+        params:{
+          'page': page
         }
       }).then((result) => {
         return result.data;
       }).catch((error) => Promise.reject(error));
-    }
+    },
+    placeholderData: keepPreviousData,
+  })
+}
+
+export const useCountGridClients = (jwt: string|undefined) => {
+  return useQuery({
+    queryKey:["clientGridCount"],
+    queryFn : () => {
+      return axios.get<number>(clientsUrl + '/count', {
+        headers:{
+          Authorization: "Bearer " + jwt
+        },
+      }).then((result) => {
+        return result.data;
+      }).catch((error) => Promise.reject(error));
+    },
+    placeholderData: keepPreviousData,
   })
 }
 
@@ -104,6 +126,25 @@ export const useEditClient = (jwt: string, id:number) => {
   return useMutation({
     mutationFn: (data:ClientForm) => {
       return axios.put(clientsUrl + "/" + id, data, {
+        headers: {
+          Authorization: "Bearer " + jwt,
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["clientQuery"] });
+    },
+    onError:(error) =>{
+      console.error(error);
+    }
+  })
+}
+
+export const useDeleteClient = (jwt: string, id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => {
+      return axios.delete(clientsUrl + "/" + id, {
         headers: {
           Authorization: "Bearer " + jwt,
         },
@@ -255,6 +296,29 @@ export const useEditUser =  (jwt:string|undefined) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey : ["userProfile"]});
+    },
+    onError: (error) =>{
+      console.error(error);
+    }
+  });
+}
+
+export const useAddInvoiceItem =  (jwt:string|undefined, invoiceId: number | null | undefined) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: InvoicePostItem) => {
+      return axios.post(
+        invoicesUrl + '/' + invoiceId + '/addItem',
+        data,
+        {
+          headers: {
+            Authorization: "Bearer " + jwt,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey : ["invoice", invoiceId, jwt]});
     },
     onError: (error) =>{
       console.error(error);
