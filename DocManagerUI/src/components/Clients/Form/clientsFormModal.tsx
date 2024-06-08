@@ -5,10 +5,9 @@ import { useAddClient } from "../../../utils/apiService";
 import { useAuth } from "react-oidc-context";
 import { useEffect, useState } from "react";
 import { getDefaultClientForm } from "./form";
-import { GridRowModelUpdate } from "@mui/x-data-grid";
 import { ErrorToast } from "../../toasts/ErrorToast";
 
-export const ClientFormModal = (props: { closeModal: () => void, addClient: (updates: GridRowModelUpdate[]) => void }) => {
+export const ClientFormModal = (props: { closeModal: () => void, addClient: () => void }) => {
   const [hasError, setHasError] = useState<boolean>(false);
   const auth = useAuth();
   const clientForm = useForm<ClientForm>({
@@ -29,8 +28,7 @@ export const ClientFormModal = (props: { closeModal: () => void, addClient: (upd
   useEffect(() => {
     if (formMutation.isSuccess) {
       setHasError(false);
-      const response = formMutation.data;
-      props.addClient([{...response.data}]);
+      props.addClient();
       props.closeModal();
     }else if(formMutation.isError){
       setHasError(true);

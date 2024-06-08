@@ -1,10 +1,9 @@
-import { GridRowModelUpdate } from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
 import { useDeleteClient } from "../../../utils/apiService";
 import { Alert, Button, Grid, Typography } from "@mui/material";
 import { useEffect } from "react";
 
-export const ClientDeleteModal = (props:{id:number, handleModalClose: () => void, updateClient : (updates: GridRowModelUpdate[]) => void}) => {
+export const ClientDeleteModal = (props:{id:number, handleModalClose: () => void, updateClient : () => void}) => {
     const auth = useAuth();
 
     const deleteMutation = useDeleteClient(auth.user!.access_token, props.id);
@@ -15,7 +14,7 @@ export const ClientDeleteModal = (props:{id:number, handleModalClose: () => void
 
     useEffect(() => {
         if (deleteMutation.isSuccess) {
-          props.updateClient([{ clientId: props.id, _action: 'delete' }])  
+          props.updateClient();
           props.handleModalClose();
         }
       }, [deleteMutation.isSuccess]);

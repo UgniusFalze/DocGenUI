@@ -1,4 +1,5 @@
 import {
+  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -43,18 +44,38 @@ const getClient = async (jwt:string, id: number) : Promise<ClientForm> => {
   .catch((error) => Promise.reject(error));
 }
 
-export const useGetGridClients = (jwt:string|undefined) => {
+export const useGetGridClients = (jwt:string|undefined, page: number) => {
   return useQuery({
-    queryKey:["gridClientQuery"],
+    queryKey:["gridClientQuery", page],
     queryFn : () => {
       return axios.get<Array<ClientGridRow>>(clientsUrl, {
         headers:{
           Authorization: "Bearer " + jwt
+        },
+        params:{
+          'page': page
         }
       }).then((result) => {
         return result.data;
       }).catch((error) => Promise.reject(error));
-    }
+    },
+    placeholderData: keepPreviousData,
+  })
+}
+
+export const useCountGridClients = (jwt: string|undefined) => {
+  return useQuery({
+    queryKey:["clientGridCount"],
+    queryFn : () => {
+      return axios.get<number>(clientsUrl + '/count', {
+        headers:{
+          Authorization: "Bearer " + jwt
+        },
+      }).then((result) => {
+        return result.data;
+      }).catch((error) => Promise.reject(error));
+    },
+    placeholderData: keepPreviousData,
   })
 }
 
