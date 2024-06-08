@@ -1,4 +1,4 @@
-import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridPaginationModel, GridRowId, GridRowParams, useGridApiRef } from "@mui/x-data-grid";
+import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridPaginationModel, useGridApiRef } from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
 import { useCountGridClients, useGetGridClients } from "../../utils/apiService";
 import {
