@@ -13,7 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { InvoiceFormModal } from "./Form/invoiceFormModal";
 import {
-  LinearProgress,
+  CircularProgress,
   Typography,
 } from "@mui/material";
 import { useGetSeriesNumber } from "../../utils/apiService";
@@ -25,13 +25,20 @@ import { GridModal } from "../modals/gridModal";
 export default function InvoiceGrid() {
   const user = useAuth();
   const navigate = useNavigate();
+  const [downloadGridIcon, setDownloadGridIcon] = useState<JSX.Element>(<Download></Download>);
   const { isFetching, data} = useQuery({
     queryKey: ["invoicesGrid", user.user?.access_token],
     queryFn: () => GetGrid(user.user!.access_token),
   });
 
+
+
   const onClick = (id: GridRowId) => {
-    HandleDownload(Number.parseInt(id.toString()), user.user!.access_token);
+    HandleDownload(Number.parseInt(id.toString()), user.user!.access_token)
+      .then(() => {
+        setDownloadGridIcon(<Download></Download>)
+      });
+      setDownloadGridIcon(<CircularProgress size={20} />)
   };
   const columns: GridColDef[] = [
     { field: "invoiceId", headerName: "ID", width: 70 },
@@ -48,7 +55,7 @@ export default function InvoiceGrid() {
       type: "actions",
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<Download />}
+          icon={downloadGridIcon}
           label="DownloadItem"
           onClick={() => onClick(params.id)}
         />,
@@ -87,8 +94,8 @@ export default function InvoiceGrid() {
         <Typography gutterBottom variant="h3">
           Invoices
         </Typography>
-        {isFetching ? <LinearProgress /> : null}
         <DataGrid
+          loading={isFetching}
           disableRowSelectionOnClick
           onRowClick={handleInvoiceView}
           autoHeight
