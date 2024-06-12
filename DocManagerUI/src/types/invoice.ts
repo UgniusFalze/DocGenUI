@@ -26,5 +26,6 @@ export type InvoiceForm = {
 export type InvoiceGridRow = {
     invoiceId : number,
     invoiceDate : Date,
-    clientName : string
+    clientName : string,
+    totalSum: number
 }

@@ -101,6 +101,7 @@ export const InvoiceView = () => {
           <div style={{ display:"flex", flexDirection:"column", height: "100%", width: "100%" }}>
             {addButtonVisible ?<Button variant="contained" sx={{marginBottom:"0.5rem", alignSelf:"end"}} onClick={() => setItemModalOpen(true)}>Add Item</Button>:<></>}
             <DataGrid
+              loading={invoice.isFetching}
               apiRef={apiRef}
               disableRowSelectionOnClick
               autoHeight

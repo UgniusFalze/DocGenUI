@@ -4,6 +4,7 @@ import {
   GridColDef,
   GridEventListener,
   GridRowId,
+  GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import { GetGrid } from "../../utils/invoiceGrid";
 import { useAuth } from "react-oidc-context";
@@ -13,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { InvoiceFormModal } from "./Form/invoiceFormModal";
 import {
-  LinearProgress,
+  CircularProgress,
   Typography,
 } from "@mui/material";
 import { useGetSeriesNumber } from "../../utils/apiService";
@@ -25,30 +26,44 @@ import { GridModal } from "../modals/gridModal";
 export default function InvoiceGrid() {
   const user = useAuth();
   const navigate = useNavigate();
+  const [downloadGridIcon, setDownloadGridIcon] = useState<JSX.Element>(<Download></Download>);
   const { isFetching, data} = useQuery({
     queryKey: ["invoicesGrid", user.user?.access_token],
     queryFn: () => GetGrid(user.user!.access_token),
   });
 
+
+
   const onClick = (id: GridRowId) => {
-    HandleDownload(Number.parseInt(id.toString()), user.user!.access_token);
+    HandleDownload(Number.parseInt(id.toString()), user.user!.access_token)
+      .then(() => {
+        setDownloadGridIcon(<Download></Download>)
+      });
+      setDownloadGridIcon(<CircularProgress size={20} />)
   };
   const columns: GridColDef[] = [
     { field: "invoiceId", headerName: "ID", width: 70 },
-    { field: "clientName", headerName: "Client Name", flex: 1 },
+    { field: "clientName", headerName: "Client Name", flex: 0.5 },
     {
       field: "invoiceDate",
       headerName: "Date",
       type: "date",
-      valueGetter: ({ value }) => value && new Date(value),
-      flex: 0.5,
+      valueGetter: ({ value }) => value && new Date(value)
     },
+    {field:"totalSum", headerName:"Total (Euro)", type: "number", valueFormatter: (value: GridValueFormatterParams<number|null>) => {
+      if(value.value === null){
+        return '';
+      }
+      return value.value.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+    },
+    flex: 0.5
+  },
     {
       field: "actions",
       type: "actions",
       getActions: (params) => [
         <GridActionsCellItem
-          icon={<Download />}
+          icon={downloadGridIcon}
           label="DownloadItem"
           onClick={() => onClick(params.id)}
         />,
@@ -87,8 +102,8 @@ export default function InvoiceGrid() {
         <Typography gutterBottom variant="h3">
           Invoices
         </Typography>
-        {isFetching ? <LinearProgress /> : null}
         <DataGrid
+          loading={isFetching}
           disableRowSelectionOnClick
           onRowClick={handleInvoiceView}
           autoHeight
