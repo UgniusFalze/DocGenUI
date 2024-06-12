@@ -4,6 +4,7 @@ import {
   GridColDef,
   GridEventListener,
   GridRowId,
+  GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import { GetGrid } from "../../utils/invoiceGrid";
 import { useAuth } from "react-oidc-context";
@@ -42,14 +43,21 @@ export default function InvoiceGrid() {
   };
   const columns: GridColDef[] = [
     { field: "invoiceId", headerName: "ID", width: 70 },
-    { field: "clientName", headerName: "Client Name", flex: 1 },
+    { field: "clientName", headerName: "Client Name", flex: 0.5 },
     {
       field: "invoiceDate",
       headerName: "Date",
       type: "date",
-      valueGetter: ({ value }) => value && new Date(value),
-      flex: 0.5,
+      valueGetter: ({ value }) => value && new Date(value)
     },
+    {field:"totalSum", headerName:"Total (Euro)", type: "number", valueFormatter: (value: GridValueFormatterParams<number|null>) => {
+      if(value.value === null){
+        return '';
+      }
+      return value.value.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+    },
+    flex: 0.5
+  },
     {
       field: "actions",
       type: "actions",
