@@ -50,7 +50,7 @@ export default function InvoiceGrid() {
       type: "date",
       valueGetter: ({ value }) => value && new Date(value)
     },
-    {field:"totalSum", headerName:"Total (Euro)", type: "number", valueFormatter: (value: GridValueFormatterParams<number|null>) => {
+    {field:"totalSum", headerName:"Total " + ((data?.invoicesTotal) ?? 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" }), type: "number", valueFormatter: (value: GridValueFormatterParams<number|null>) => {
       if(value.value === null){
         return '';
       }
@@ -103,11 +103,12 @@ export default function InvoiceGrid() {
           Invoices
         </Typography>
         <DataGrid
+          pagination
           loading={isFetching}
           disableRowSelectionOnClick
           onRowClick={handleInvoiceView}
           autoHeight
-          rows={data ?? []}
+          rows={data?.invoices ?? []}
           columns={columns}
           getRowId={(row) => row.invoiceId}
           initialState={{
