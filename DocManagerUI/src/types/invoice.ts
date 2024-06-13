@@ -32,5 +32,6 @@ export type InvoiceGridRow = {
 
 export type InvoiceGrid = {
     invoices: Array<InvoiceGridRow>,
-    invoicesTotal: number
+    invoicesTotal: number,
+    isPayed: boolean
 }
