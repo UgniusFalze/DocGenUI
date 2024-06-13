@@ -325,3 +325,26 @@ export const useAddInvoiceItem =  (jwt:string|undefined, invoiceId: number | nul
     }
   });
 }
+
+export const useSetInvoicePayed = (jwt: string|undefined, invoiceId: number | null | undefined) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: boolean) => {
+      return axios.post(
+        invoicesUrl + '/' + invoiceId + '/setPayed',
+        {isPayed: data},
+        {
+          headers: {
+            Authorization: "Bearer " + jwt,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey : ["invoice", invoiceId, jwt]});
+    },
+    onError: (error) =>{
+      console.error(error);
+    }
+  });
+}

@@ -3,7 +3,9 @@ import {
   GridActionsCellItem,
   GridColDef,
   GridEventListener,
+  GridRenderCellParams,
   GridRowId,
+  GridValidRowModel,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
 import { GetGrid } from "../../utils/invoiceGrid";
@@ -14,10 +16,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { InvoiceFormModal } from "./Form/invoiceFormModal";
 import {
+  Checkbox,
   CircularProgress,
   Typography,
 } from "@mui/material";
-import { useGetSeriesNumber } from "../../utils/apiService";
+import { useGetSeriesNumber, useSetInvoicePayed } from "../../utils/apiService";
 import { Download } from "@mui/icons-material";
 import { HandleDownload } from "../../utils/documentsCrud";
 import { useNavigate } from "react-router-dom";
@@ -32,7 +35,23 @@ export default function InvoiceGrid() {
     queryFn: () => GetGrid(user.user!.access_token),
   });
 
+  const RenderCheckbox = (props: GridRenderCellParams<GridValidRowModel,boolean>) => {
+    const [checked, setChecked] = useState(props.value);
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setChecked(event.target.checked);
+      mutate(event.target.checked);
+    }
 
+    const {mutate} = useSetInvoicePayed(user.user?.access_token, Number.parseInt(props.id.toString()));
+
+    return (
+      <Checkbox
+        size="medium"
+        onChange={handleChange}
+        checked={checked}
+      />
+    )
+  }
 
   const onClick = (id: GridRowId) => {
     HandleDownload(Number.parseInt(id.toString()), user.user!.access_token)
@@ -59,14 +78,20 @@ export default function InvoiceGrid() {
     flex: 0.5
   },
     {
-      field: "actions",
+      field: "isPayed",
+      headerName: "Is Payed?",
+      type:"actions",
+      renderCell: RenderCheckbox
+    },
+    {
+      field: "downloadActions",
       type: "actions",
       getActions: (params) => [
         <GridActionsCellItem
           icon={downloadGridIcon}
           label="DownloadItem"
           onClick={() => onClick(params.id)}
-        />,
+        />
       ],
     },
   ];
