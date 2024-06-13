@@ -29,3 +29,8 @@ export type InvoiceGridRow = {
     clientName : string,
     totalSum: number
 }
+
+export type InvoiceGrid = {
+    invoices: Array<InvoiceGridRow>,
+    invoicesTotal: number
+}
