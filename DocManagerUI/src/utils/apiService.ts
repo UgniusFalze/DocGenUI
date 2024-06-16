@@ -159,6 +159,25 @@ export const useDeleteClient = (jwt: string, id: number) => {
   })
 }
 
+export const useDeleteInvoice = (jwt: string, id: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => {
+      return axios.delete(invoicesUrl + "/" + id, {
+        headers: {
+          Authorization: "Bearer " + jwt,
+        },
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invoicesGrid"] });
+    },
+    onError:(error) =>{
+      console.error(error);
+    }
+  })
+}
+
 export const useAddPost = (jwt: string) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -249,6 +268,7 @@ export const useGetInvoice = (jwt:string| undefined, invoiceId:string|undefined)
           const invoiceItems = result.data.products.map((product, index) => {
             return {
               ...product,
+              realId : product.invoiceItemId,
               invoiceItemId:index + 1
             }
           })
@@ -333,6 +353,28 @@ export const useSetInvoicePayed = (jwt: string|undefined, invoiceId: number | nu
       return axios.post(
         invoicesUrl + '/' + invoiceId + '/setPayed',
         {isPayed: data},
+        {
+          headers: {
+            Authorization: "Bearer " + jwt,
+          },
+        }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey : ["invoice", invoiceId, jwt]});
+    },
+    onError: (error) =>{
+      console.error(error);
+    }
+  });
+}
+
+export const useDeleteInvoiceItem =  (jwt:string|undefined, invoiceId: number | null | undefined, invoiceItemId: number | null | undefined) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => {
+      return axios.delete(
+        invoicesUrl + '/' + invoiceId + '/deleteItem/' + invoiceItemId,
         {
           headers: {
             Authorization: "Bearer " + jwt,

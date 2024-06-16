@@ -2,6 +2,7 @@ import {
   DataGrid,
   GridActionsCellItem,
   GridColDef,
+  GridDeleteIcon,
   GridEventListener,
   GridRenderCellParams,
   GridRowId,
@@ -16,21 +17,26 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { InvoiceFormModal } from "./Form/invoiceFormModal";
 import {
+  Box,
   Checkbox,
   CircularProgress,
   Typography,
 } from "@mui/material";
 import { useGetSeriesNumber, useSetInvoicePayed } from "../../utils/apiService";
-import { Download } from "@mui/icons-material";
+import { Download, WarningOutlined } from "@mui/icons-material";
 import { HandleDownload } from "../../utils/documentsCrud";
 import { useNavigate } from "react-router-dom";
 import { GridModal } from "../modals/gridModal";
+import { InvoiceDeleteModal } from "./Form/InvoiceDeleteModal";
 
 export default function InvoiceGrid() {
   const user = useAuth();
   const navigate = useNavigate();
   const [downloadGridIcon, setDownloadGridIcon] = useState<JSX.Element>(<Download></Download>);
-  const { isFetching, data} = useQuery({
+  const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
+  const [modalTitle, setModalTitle] = useState<string|JSX.Element>("");
+
+  const { isFetching, data, refetch} = useQuery({
     queryKey: ["invoicesGrid", user.user?.access_token],
     queryFn: () => GetGrid(user.user!.access_token),
   });
@@ -91,7 +97,12 @@ export default function InvoiceGrid() {
           icon={downloadGridIcon}
           label="DownloadItem"
           onClick={() => onClick(params.id)}
-        />
+        />,
+        <GridActionsCellItem
+          icon={<GridDeleteIcon/>}
+          label="Delete Invoice"
+          onClick={() => handleClientDeleteModalOpen(params.id)}
+        />,
       ],
     },
   ];
@@ -99,15 +110,35 @@ export default function InvoiceGrid() {
   const seriesNumber = useGetSeriesNumber(user.user!.access_token);
 
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
   const handleInvoiceView: GridEventListener<"rowClick"> = (data) => {
     navigate("/invoices/" + data.id);
   };
 
+  const handleFormModalOpen = () => {
+    setModalTitle("Add Invoice");
+    setGridModal(<InvoiceFormModal
+      invoiceFormNumber={seriesNumber.data}
+      closeModal={handleModalClose}/>);
+      setModalOpen(true);
+  }
+
   const handleContentClose = () => {
-    return;
+    setGridModal(null);
   };
+
+  const handleClientDeleteModalOpen = (id: GridRowId) => {
+    const parsedId = Number.parseInt(id.toString());
+    setModalTitle(<Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}><WarningOutlined fontSize="large"></WarningOutlined></Box>);
+    setGridModal(<InvoiceDeleteModal handleModalClose={handleModalClose} id={parsedId} updateInvoices={refetchData}></InvoiceDeleteModal>);
+    setModalOpen(true);
+  }
+
+  const refetchData = () => {
+    refetch();
+  }
+
+
 
   return (
     <div>
@@ -115,13 +146,8 @@ export default function InvoiceGrid() {
         isModalOpen={modalOpen}
         handleModalClose={handleModalClose}
         handleContentClose={handleContentClose}
-        title="Add Invoice"
-        modalContent={
-          <InvoiceFormModal
-            invoiceFormNumber={seriesNumber.data}
-            closeModal={handleModalClose}
-          />
-        }
+        title={modalTitle}
+        modalContent={gridModal}
       ></GridModal>
       <div style={{ height: "100%", width: "100%" }}>
         <Typography gutterBottom variant="h3">
@@ -145,7 +171,7 @@ export default function InvoiceGrid() {
         />
       </div>
       <Fab
-        onClick={() => handleModalOpen()}
+        onClick={() => handleFormModalOpen()}
         sx={{
           position: "fixed",
           bottom: 0,
