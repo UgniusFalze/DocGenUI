@@ -27,16 +27,17 @@ export const InvoiceView = () => {
   const { data: invoiceData, refetch, isFetched, isFetching } = useGetInvoice(auth.user?.access_token, id);
   const [data, setData] = useState<string | undefined>(undefined);
   const [itemModalOpen, setItemModalOpen] = useState<boolean>(false);
-  const [successfullAdd, setSuccessfullAdd] = useState<boolean>(false);
+  const [successfullAdd, setSuccessfullAdd] = useState<boolean>(true);
   const [addButtonVisible, setAddButtonVisible] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string | JSX.Element>("");
   const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
 
 
   useEffect(() => {
-    if (id !== undefined) {
+    if (id !== undefined && successfullAdd === true) {
       createFileObjectUrl(id, auth.user!.access_token).then((data) => {
         setData(data);
+        setSuccessfullAdd(false);
       })
     }
   }, [id, successfullAdd]);
@@ -86,7 +87,7 @@ export const InvoiceView = () => {
     const parsedId = Number.parseInt(invoiceItemId.toString());
     const parsedInvoiceId = Number.parseInt(id?.toString() ?? '0');
     setModalTitle(<Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}><WarningOutlined fontSize="large"></WarningOutlined></Box>);
-    setGridModal(<InvoiceItemDeleteModal handleModalClose={closeModal} invoiceItemId={parsedId} invoiceId={parsedInvoiceId} updateInvoice={update}></InvoiceItemDeleteModal>);
+    setGridModal(<InvoiceItemDeleteModal handleModalClose={closeModal} invoiceItemId={parsedId} invoiceId={parsedInvoiceId} updateInvoice={updateGrid}></InvoiceItemDeleteModal>);
     openModal();
   }
 
@@ -97,7 +98,7 @@ export const InvoiceView = () => {
   }
 
   const update = () => {
-    updateGrid(true);
+    setGridModal(null);
   }
 
   return (
