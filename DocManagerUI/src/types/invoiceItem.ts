@@ -4,6 +4,7 @@ export type InvoiceItem = {
   unitOfMeasurement: string;
   units: number;
   priceOfUnit: number;
+  realId:number;
 };
 
 export type InvoicePostItem = {
