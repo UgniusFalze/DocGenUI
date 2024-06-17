@@ -18,6 +18,4 @@ FROM nginx:latest as production-stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 COPY conf /etc/nginx/conf.d/default.conf
 WORKDIR /conf
-COPY nginx-selfsigned.crt  /conf/
-COPY nginx-selfsigned.key  /conf/
 CMD ["nginx", "-g", "daemon off;"]
