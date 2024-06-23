@@ -10,7 +10,6 @@ export const UnreachableAuth = (props:{errorMessage:string}) => {
                     <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
                         Failed to connect to login service...
                     </Typography>
-                        <div>{props.errorMessage}</div>
                     </CardContent>
                     <CardActions>
                         <Button onClick={() => window.location.reload()}>Retry</Button>
