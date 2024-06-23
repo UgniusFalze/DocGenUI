@@ -15,7 +15,7 @@ function App() {
   if (auth.isLoading) {
     return <LoadingAuth />;
   } else if (auth.error) {
-    return <UnreachableAuth errorMessage={auth.error.message}></UnreachableAuth>
+    return <UnreachableAuth></UnreachableAuth>
   } else {
     return <WithAuthenticationRequired />;
   }

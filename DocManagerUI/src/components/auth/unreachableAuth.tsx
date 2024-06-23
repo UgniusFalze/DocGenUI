@@ -1,6 +1,6 @@
 import { Box, Button, Card, CardActions, CardContent, CssBaseline, Typography } from "@mui/material"
 
-export const UnreachableAuth = (props:{errorMessage:string}) => {
+export const UnreachableAuth = () => {
     return (
         <Box sx={{ display: "flex", justifyContent:"center", alignContent:"center", height:"100vh"}}>
             <CssBaseline />
