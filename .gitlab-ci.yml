@@ -10,7 +10,6 @@ lint-test-job:
   rules:
     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
   script:
-    - cd DocManagerUI  
     - npm i eslint
     - node_modules/eslint/bin/eslint.js .
 
@@ -23,6 +22,5 @@ build-image:
    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
     - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER $CI_REGISTRY --password-stdin
-    - cd DocManagerUI
     - docker build -t $CI_REGISTRY_IMAGE .
     - docker push $CI_REGISTRY_IMAGE
