@@ -4,16 +4,15 @@ import {
   GridColDef,
   GridDeleteIcon,
   GridEventListener,
+  GridPaginationModel,
   GridRenderCellParams,
   GridRowId,
   GridValidRowModel,
   GridValueFormatterParams,
 } from "@mui/x-data-grid";
-import { GetGrid } from "../../utils/invoiceGrid";
 import { useAuth } from "react-oidc-context";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { InvoiceFormModal } from "./Form/invoiceFormModal";
 import {
@@ -22,7 +21,7 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
-import { useGetSeriesNumber, useSetInvoicePayed } from "../../utils/apiService";
+import { useGetInvoicesGrid, useGetSeriesNumber, useSetInvoicePayed } from "../../utils/apiService";
 import { Download, WarningOutlined } from "@mui/icons-material";
 import { HandleDownload } from "../../utils/documentsCrud";
 import { useNavigate } from "react-router-dom";
@@ -36,10 +35,12 @@ export default function InvoiceGrid() {
   const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
   const [modalTitle, setModalTitle] = useState<string|JSX.Element>("");
 
-  const { isFetching, data, refetch} = useQuery({
-    queryKey: ["invoicesGrid", user.user?.access_token],
-    queryFn: () => GetGrid(user.user!.access_token),
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 10,
   });
+
+  const { isFetching, data, refetch} = useGetInvoicesGrid(user.user!.access_token, paginationModel.page);
 
   const RenderCheckbox = (props: GridRenderCellParams<GridValidRowModel,boolean>) => {
     const [checked, setChecked] = useState(props.value);
@@ -162,12 +163,9 @@ export default function InvoiceGrid() {
           rows={data?.invoices ?? []}
           columns={columns}
           getRowId={(row) => row.invoiceId}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 15 },
-            },
-          }}
-          pageSizeOptions={[15, 25]}
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          paginationMode="server"
         />
       </div>
       <Fab
