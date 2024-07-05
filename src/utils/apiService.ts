@@ -7,7 +7,7 @@ import {
 import { ClientForm,  ClientGridRow,  ClientSelect } from "../types/client";
 import { apiUrl, clientsUrl, invoicesUrl, userUrl } from "./apiUrl";
 import axios from "axios";
-import { Invoice, InvoiceForm } from "../types/invoice";
+import { Invoice, InvoiceForm, InvoiceGrid } from "../types/invoice";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { UserForm, UserProfile } from "../types/user";
@@ -389,4 +389,23 @@ export const useDeleteInvoiceItem =  (jwt:string|undefined, invoiceId: number | 
       console.error(error);
     }
   });
+}
+
+export const useGetInvoicesGrid = (jwt: string|undefined, page: number) => {
+  return useQuery({
+    queryKey:["invoicesGrid", page],
+    queryFn : () => {
+      return axios.get<InvoiceGrid>(invoicesUrl, {
+        headers:{
+          Authorization: "Bearer " + jwt
+        },
+        params:{
+          'page': page
+        }
+      }).then((result) => {
+        return result.data;
+      }).catch((error) => Promise.reject(error));
+    },
+    placeholderData: keepPreviousData,
+  })
 }
