@@ -59,21 +59,6 @@ export const InvoiceItemInput = (props: { invoiceId: number | null | undefined, 
                     )}
                 />
                 <Controller
-                    name="unitOfMeasurement"
-                    control={invoiceForm.control}
-                    rules={{ required: true }}
-                    render={({ field }) => (
-                        <FormControl>
-                            <TextField
-                                {...field}
-                                error={!!invoiceForm.formState.errors.unitOfMeasurement}
-                                label="Measured in"
-                                variant="outlined"
-                            />
-                        </FormControl>
-                    )}
-                />
-                <Controller
                     name="units"
                     control={invoiceForm.control}
                     rules={{ required: true }}

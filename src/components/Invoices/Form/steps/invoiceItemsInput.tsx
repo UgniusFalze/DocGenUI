@@ -58,21 +58,6 @@ export const InvoiceItemInput = (props: {
           />
           <Stack direction="row" spacing={2}>
             <Controller
-              rules={{ required: true }}
-              render={({ field }) => (
-                <FormControl>
-                  <TextField
-                    {...field}
-                    error={!!formState.errors.items?.[index]?.unitOfMeasurement}
-                    label="Measured in"
-                    variant="outlined"
-                  />
-                </FormControl>
-              )}
-              name={`items.${index}.unitOfMeasurement` as const}
-              control={props.control}
-            />
-            <Controller
               rules={{ required: true, pattern:/^[0-9]*$/ }}
               render={({ field }) => (
                 <FormControl>
