@@ -9,7 +9,7 @@ export const GridModal = (props: {
   modalContent: JSX.Element | null;
 }) => {
 
-  const handleCloseEvent = (event: object, reason: "backdropClick" | "escapeKeyDown") => {
+  const handleCloseEvent = (_event: object, reason: "backdropClick" | "escapeKeyDown") => {
     if(reason === "escapeKeyDown"){
       props.handleModalClose();
     }
