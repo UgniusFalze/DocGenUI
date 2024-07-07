@@ -13,4 +13,3 @@ RUN npm run build
 # production stage
 FROM jonasal/nginx-certbot:latest
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-COPY conf /etc/nginx/conf.d/default.conf
