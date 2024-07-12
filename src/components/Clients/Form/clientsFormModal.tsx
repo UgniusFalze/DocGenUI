@@ -1,4 +1,4 @@
-import { Box, Button, FormControl, Stack, TextField } from "@mui/material";
+import { Box, FormControl, Stack, TextField } from "@mui/material";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ClientForm } from "../../../types/client";
 import { useAddClient } from "../../../utils/apiService";
@@ -6,6 +6,7 @@ import { useAuth } from "react-oidc-context";
 import { useEffect, useState } from "react";
 import { getDefaultClientForm } from "./form";
 import { ErrorToast } from "../../toasts/ErrorToast";
+import { LoadingButton } from "@mui/lab";
 
 export const ClientFormModal = (props: {
   closeModal: () => void;
@@ -19,11 +20,13 @@ export const ClientFormModal = (props: {
   });
 
   const formMutation = useAddClient(auth.user!.access_token);
+  const [isLoadingButton, setIsLoadingButton] = useState(false);
 
   const onSubmit: SubmitHandler<ClientForm> = async (data) => {
     //const _ = clientForm.formState.errors;
     await clientForm.trigger();
     if (clientForm.formState.isValid) {
+      setIsLoadingButton(true);
       formMutation.mutate(data);
     }
   };
@@ -34,6 +37,7 @@ export const ClientFormModal = (props: {
       props.addClient();
       props.closeModal();
     } else if (formMutation.isError) {
+      setIsLoadingButton(false);
       setHasError(true);
     }
   }, [formMutation.isSuccess, formMutation.isError]);
@@ -116,7 +120,9 @@ export const ClientFormModal = (props: {
           />
           <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
             <Box sx={{ flex: "1 1 auto" }} />
-            <Button type="submit">Save</Button>
+            <LoadingButton loading={isLoadingButton} type="submit">
+              Save
+            </LoadingButton>
           </Box>
         </Stack>
       </form>
