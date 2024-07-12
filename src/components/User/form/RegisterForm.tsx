@@ -1,6 +1,5 @@
 import {
   Box,
-  Button,
   Container,
   CssBaseline,
   FormControl,
@@ -14,10 +13,13 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { UserForm } from "../../../types/user";
 import { useAuth } from "react-oidc-context";
 import { useAddUser } from "../../../utils/apiService";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getRedirectUriFromLogin } from "../../../utils/envProvider";
+import { LoadingButton } from "@mui/lab";
 
-export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction<boolean>>}) => {
+export const RegisterForm = (props: {
+  setValid: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const user = useAuth();
   const formMutation = useAddUser(user.user?.access_token);
   const userRegisterForm = useForm<UserForm>({
@@ -29,6 +31,8 @@ export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction
       bankName: "",
     },
   });
+
+  const [isLoadingButton, setIsLoadingButton] = useState(false);
 
   const handleLogout = async () => {
     user.removeUser();
@@ -43,10 +47,11 @@ export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction
     }
   }, [formMutation.isSuccess]);
 
-  const onSubmit: SubmitHandler<UserForm> = async(data) => {
+  const onSubmit: SubmitHandler<UserForm> = async (data) => {
     //const _ = userRegisterForm.formState.errors;
     await userRegisterForm.trigger();
     if (userRegisterForm.formState.isValid) {
+      setIsLoadingButton(true);
       formMutation.mutate(data);
     }
   };
@@ -158,7 +163,8 @@ export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction
                   </FormControl>
                 )}
               />
-              <Button
+              <LoadingButton
+                loading={isLoadingButton}
                 variant="contained"
                 sx={{
                   padding: "1em",
@@ -166,7 +172,7 @@ export const RegisterForm = (props:{setValid:React.Dispatch<React.SetStateAction
                 type="submit"
               >
                 Register
-              </Button>
+              </LoadingButton>
             </Stack>
           </form>
         </Paper>

@@ -1,42 +1,49 @@
-import { Box, Button, FormControl, Stack, TextField } from "@mui/material";
+import { Box, FormControl, Stack, TextField } from "@mui/material";
 import { ClientForm } from "../../../types/client";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useAuth } from "react-oidc-context";
 import { useEditClient, useClient } from "../../../utils/apiService";
 import { getDefaultClientForm } from "./form";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { GridRowModelUpdate } from "@mui/x-data-grid";
+import { LoadingButton } from "@mui/lab";
 
-export const ClientEditFormModal = (props: { closeModal: () => void , clientId: number, updateClient : (updates: GridRowModelUpdate[]) => void}) => {
-    const auth = useAuth();
-    const client = useClient(auth.user!.access_token, props.clientId);
-    const clientForm = useForm<ClientForm>({
-      defaultValues: getDefaultClientForm(),
-      values: client.data,
-      mode:"onChange"
-    });
+export const ClientEditFormModal = (props: {
+  closeModal: () => void;
+  clientId: number;
+  updateClient: (updates: GridRowModelUpdate[]) => void;
+}) => {
+  const auth = useAuth();
+  const client = useClient(auth.user!.access_token, props.clientId);
+  const clientForm = useForm<ClientForm>({
+    defaultValues: getDefaultClientForm(),
+    values: client.data,
+    mode: "onChange",
+  });
 
+  const formMutation = useEditClient(auth.user!.access_token, props.clientId);
+  const [isLoadingButton, setIsLoadingButton] = useState(false);
 
-    const formMutation = useEditClient(auth.user!.access_token, props.clientId);
+  const onSubmit: SubmitHandler<ClientForm> = async (data) => {
+    //const _ = clientForm.formState.errors;
+    await clientForm.trigger();
+    if (clientForm.formState.isValid) {
+      setIsLoadingButton(true);
+      formMutation.mutate(data);
+    }
+  };
 
-    const onSubmit: SubmitHandler<ClientForm> = async (data) => {
-      //const _ = clientForm.formState.errors;
-      await clientForm.trigger();
-      if (clientForm.formState.isValid) {
-        formMutation.mutate(data);
-      }
-    };
-  
-    useEffect(() => {
-      if (formMutation.isSuccess) {
-        props.updateClient([{clientId: props.clientId, ...clientForm.getValues()}]);
-        props.closeModal();
-      }
-    }, [formMutation.isSuccess]);
+  useEffect(() => {
+    if (formMutation.isSuccess) {
+      props.updateClient([
+        { clientId: props.clientId, ...clientForm.getValues() },
+      ]);
+      props.closeModal();
+    }
+  }, [formMutation.isSuccess]);
 
-
-    return (
-        <form onSubmit={clientForm.handleSubmit(onSubmit)}>
+  return (
+    <form onSubmit={clientForm.handleSubmit(onSubmit)}>
       <Stack
         sx={{ width: "100%", padding: "5px" }}
         direction="column"
@@ -107,9 +114,11 @@ export const ClientEditFormModal = (props: { closeModal: () => void , clientId: 
         />
         <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
           <Box sx={{ flex: "1 1 auto" }} />
-          <Button type="submit">Save</Button>
+          <LoadingButton loading={isLoadingButton} type="submit">
+            Save
+          </LoadingButton>
         </Box>
       </Stack>
     </form>
-    )
-}
+  );
+};
