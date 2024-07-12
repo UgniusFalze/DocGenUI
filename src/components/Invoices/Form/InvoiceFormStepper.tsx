@@ -65,7 +65,8 @@ export default function InvoiceFormStepper(props: {
   }, [formMutation.isSuccess]);
 
   const handleClick = async () => {
-    if (await invoiceForm.trigger()) {
+    const trigger = await invoiceForm.trigger();
+    if (trigger) {
       handleNext();
     }
   };
@@ -80,7 +81,7 @@ export default function InvoiceFormStepper(props: {
       { ...data },
       {
         keepErrors: true,
-      }
+      },
     );
   };
 
@@ -109,7 +110,9 @@ export default function InvoiceFormStepper(props: {
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                 <Button onClick={handleReset}>Reset</Button>
                 <Box sx={{ flex: "1 1 auto" }} />
-                <Button key={"buttonSubmit"} type="submit">Save</Button>
+                <Button key={"buttonSubmit"} type="submit">
+                  Save
+                </Button>
               </Box>
             </React.Fragment>
           ) : (
@@ -130,7 +133,9 @@ export default function InvoiceFormStepper(props: {
                   Back
                 </Button>
                 <Box sx={{ flex: "1 1 auto" }} />
-                <Button type="button" onClick={handleClick}>Next</Button>
+                <Button type="button" onClick={handleClick}>
+                  Next
+                </Button>
               </Box>
             </React.Fragment>
           )}

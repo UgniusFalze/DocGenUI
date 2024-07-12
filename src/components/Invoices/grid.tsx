@@ -15,13 +15,12 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import { useState } from "react";
 import { InvoiceFormModal } from "./Form/invoiceFormModal";
+import { Box, Checkbox, CircularProgress, Typography } from "@mui/material";
 import {
-  Box,
-  Checkbox,
-  CircularProgress,
-  Typography,
-} from "@mui/material";
-import { useGetInvoicesGrid, useGetSeriesNumber, useSetInvoicePayed } from "../../utils/apiService";
+  useGetInvoicesGrid,
+  useGetSeriesNumber,
+  useSetInvoicePayed,
+} from "../../utils/apiService";
 import { Download, WarningOutlined } from "@mui/icons-material";
 import { HandleDownload } from "../../utils/documentsCrud";
 import { useNavigate } from "react-router-dom";
@@ -31,41 +30,47 @@ import { InvoiceDeleteModal } from "./Form/InvoiceDeleteModal";
 export default function InvoiceGrid() {
   const user = useAuth();
   const navigate = useNavigate();
-  const [downloadGridIcon, setDownloadGridIcon] = useState<JSX.Element>(<Download></Download>);
+  const [downloadGridIcon, setDownloadGridIcon] = useState<JSX.Element>(
+    <Download></Download>,
+  );
   const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
-  const [modalTitle, setModalTitle] = useState<string|JSX.Element>("");
+  const [modalTitle, setModalTitle] = useState<string | JSX.Element>("");
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
     pageSize: 10,
   });
 
-  const { isFetching, data, refetch} = useGetInvoicesGrid(user.user!.access_token, paginationModel.page);
+  const { isFetching, data, refetch } = useGetInvoicesGrid(
+    user.user!.access_token,
+    paginationModel.page,
+  );
 
-  const RenderCheckbox = (props: GridRenderCellParams<GridValidRowModel,boolean>) => {
+  const RenderCheckbox = (
+    props: GridRenderCellParams<GridValidRowModel, boolean>,
+  ) => {
     const [checked, setChecked] = useState(props.value);
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
       setChecked(event.target.checked);
       mutate(event.target.checked);
-    }
+    };
 
-    const {mutate} = useSetInvoicePayed(user.user?.access_token, Number.parseInt(props.id.toString()));
+    const { mutate } = useSetInvoicePayed(
+      user.user?.access_token,
+      Number.parseInt(props.id.toString()),
+    );
 
-    return (
-      <Checkbox
-        size="medium"
-        onChange={handleChange}
-        checked={checked}
-      />
-    )
-  }
+    return <Checkbox size="medium" onChange={handleChange} checked={checked} />;
+  };
 
   const onClick = (id: GridRowId) => {
-    HandleDownload(Number.parseInt(id.toString()), user.user!.access_token)
-      .then(() => {
-        setDownloadGridIcon(<Download></Download>)
-      });
-      setDownloadGridIcon(<CircularProgress size={20} />)
+    HandleDownload(
+      Number.parseInt(id.toString()),
+      user.user!.access_token,
+    ).then(() => {
+      setDownloadGridIcon(<Download></Download>);
+    });
+    setDownloadGridIcon(<CircularProgress size={20} />);
   };
   const columns: GridColDef[] = [
     { field: "invoiceId", headerName: "ID", width: 70 },
@@ -74,21 +79,33 @@ export default function InvoiceGrid() {
       field: "invoiceDate",
       headerName: "Date",
       type: "date",
-      valueGetter: ({ value }) => value && new Date(value)
+      valueGetter: ({ value }) => value && new Date(value),
     },
-    {field:"totalSum", headerName:"Total " + ((data?.invoicesTotal) ?? 0).toLocaleString("de-DE", { style: "currency", currency: "EUR" }), type: "number", valueFormatter: (value: GridValueFormatterParams<number|null>) => {
-      if(value.value === null){
-        return '';
-      }
-      return value.value.toLocaleString("de-DE", { style: "currency", currency: "EUR" });
+    {
+      field: "totalSum",
+      headerName:
+        "Total " +
+        (data?.invoicesTotal ?? 0).toLocaleString("de-DE", {
+          style: "currency",
+          currency: "EUR",
+        }),
+      type: "number",
+      valueFormatter: (value: GridValueFormatterParams<number | null>) => {
+        if (value.value === null) {
+          return "";
+        }
+        return value.value.toLocaleString("de-DE", {
+          style: "currency",
+          currency: "EUR",
+        });
+      },
+      flex: 0.5,
     },
-    flex: 0.5
-  },
     {
       field: "isPayed",
       headerName: "Is Payed?",
-      type:"actions",
-      renderCell: RenderCheckbox
+      type: "actions",
+      renderCell: RenderCheckbox,
     },
     {
       field: "downloadActions",
@@ -100,7 +117,7 @@ export default function InvoiceGrid() {
           onClick={() => onClick(params.id)}
         />,
         <GridActionsCellItem
-          icon={<GridDeleteIcon/>}
+          icon={<GridDeleteIcon />}
           label="Delete Invoice"
           onClick={() => handleClientDeleteModalOpen(params.id)}
         />,
@@ -118,11 +135,14 @@ export default function InvoiceGrid() {
 
   const handleFormModalOpen = () => {
     setModalTitle("Add Invoice");
-    setGridModal(<InvoiceFormModal
-      invoiceFormNumber={seriesNumber.data}
-      closeModal={handleModalClose}/>);
-      setModalOpen(true);
-  }
+    setGridModal(
+      <InvoiceFormModal
+        invoiceFormNumber={seriesNumber.data}
+        closeModal={handleModalClose}
+      />,
+    );
+    setModalOpen(true);
+  };
 
   const handleContentClose = () => {
     setGridModal(null);
@@ -130,16 +150,29 @@ export default function InvoiceGrid() {
 
   const handleClientDeleteModalOpen = (id: GridRowId) => {
     const parsedId = Number.parseInt(id.toString());
-    setModalTitle(<Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}><WarningOutlined fontSize="large"></WarningOutlined></Box>);
-    setGridModal(<InvoiceDeleteModal handleModalClose={handleModalClose} id={parsedId} updateInvoices={refetchData}></InvoiceDeleteModal>);
+    setModalTitle(
+      <Box
+        width={"100%"}
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <WarningOutlined fontSize="large"></WarningOutlined>
+      </Box>,
+    );
+    setGridModal(
+      <InvoiceDeleteModal
+        handleModalClose={handleModalClose}
+        id={parsedId}
+        updateInvoices={refetchData}
+      ></InvoiceDeleteModal>,
+    );
     setModalOpen(true);
-  }
+  };
 
   const refetchData = () => {
     refetch();
-  }
-
-
+  };
 
   return (
     <div>
