@@ -50,7 +50,7 @@ export default function InvoiceGrid(props: {
     paginationModel.page,
   );
 
-  const { data: invoicesCount, refect: refectCount } = useCountGridInvoices(
+  const { data: invoicesCount, refetch: refectCount } = useCountGridInvoices(
     user.user!.access_token,
   );
 

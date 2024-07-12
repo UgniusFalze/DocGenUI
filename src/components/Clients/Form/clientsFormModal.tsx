@@ -7,12 +7,15 @@ import { useEffect, useState } from "react";
 import { getDefaultClientForm } from "./form";
 import { ErrorToast } from "../../toasts/ErrorToast";
 
-export const ClientFormModal = (props: { closeModal: () => void, addClient: () => void }) => {
+export const ClientFormModal = (props: {
+  closeModal: () => void;
+  addClient: () => void;
+}) => {
   const [hasError, setHasError] = useState<boolean>(false);
   const auth = useAuth();
   const clientForm = useForm<ClientForm>({
     defaultValues: getDefaultClientForm(),
-    mode:"onChange"
+    mode: "onChange",
   });
 
   const formMutation = useAddClient(auth.user!.access_token);
@@ -30,14 +33,18 @@ export const ClientFormModal = (props: { closeModal: () => void, addClient: () =
       setHasError(false);
       props.addClient();
       props.closeModal();
-    }else if(formMutation.isError){
+    } else if (formMutation.isError) {
       setHasError(true);
     }
   }, [formMutation.isSuccess, formMutation.isError]);
 
   return (
     <>
-      <ErrorToast open={hasError}/>
+      <ErrorToast
+        open={hasError}
+        onClose={() => setHasError(false)}
+        message={"Failed to save client"}
+      />
       <form onSubmit={clientForm.handleSubmit(onSubmit)}>
         <Stack
           sx={{ width: "100%", padding: "5px" }}
