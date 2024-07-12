@@ -12,6 +12,7 @@ import { Container } from "@mui/material";
 import dayjs from "dayjs";
 import { useAuth } from "react-oidc-context";
 import { useAddPost } from "../../../utils/apiService";
+import { LoadingButton } from "@mui/lab";
 
 const steps = ["Create an invoice", "Add items to the invoice"];
 
@@ -42,6 +43,8 @@ export default function InvoiceFormStepper(props: {
     mode: "onChange",
   });
 
+  const [buttonLoading, setButtonLoading] = useState<boolean>(false);
+
   const auth = useAuth();
 
   const formMutation = useAddPost(auth.user!.access_token);
@@ -61,8 +64,10 @@ export default function InvoiceFormStepper(props: {
   useEffect(() => {
     if (formMutation.isSuccess) {
       props.closeModal();
+    } else if (formMutation.isError) {
+      setButtonLoading(false);
     }
-  }, [formMutation.isSuccess]);
+  }, [formMutation.isSuccess, formMutation.isError]);
 
   const handleClick = async () => {
     const trigger = await invoiceForm.trigger();
@@ -73,9 +78,8 @@ export default function InvoiceFormStepper(props: {
 
   const onSubmit: SubmitHandler<InvoiceForm> = (data) => {
     if (invoiceForm.formState.isValid) {
+      setButtonLoading(true);
       formMutation.mutate(data);
-    } else {
-      console.log("invalid");
     }
     invoiceForm.reset(
       { ...data },
@@ -110,9 +114,13 @@ export default function InvoiceFormStepper(props: {
               <Box sx={{ display: "flex", flexDirection: "row", pt: 2 }}>
                 <Button onClick={handleReset}>Reset</Button>
                 <Box sx={{ flex: "1 1 auto" }} />
-                <Button key={"buttonSubmit"} type="submit">
+                <LoadingButton
+                  key={"buttonSubmit"}
+                  type="submit"
+                  loading={buttonLoading}
+                >
                   Save
-                </Button>
+                </LoadingButton>
               </Box>
             </React.Fragment>
           ) : (

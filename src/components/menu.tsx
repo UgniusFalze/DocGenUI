@@ -1,4 +1,4 @@
-import React, {useState } from "react";
+import React, { useState } from "react";
 import { useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -14,7 +14,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Avatar, MenuItem, MenuList } from "@mui/material";
 import AppBar from "./app-bar";
 import Drawer from "./bar-drawer";
@@ -26,9 +32,11 @@ import { ClientsGrid } from "./Clients/grid";
 import { useAuth } from "react-oidc-context";
 import { InvoiceView } from "./Invoices/View/invoiceView";
 import { getRedirectUriFromLogin } from "../utils/envProvider";
-import Menu  from '@mui/material/Menu';
+import Menu from "@mui/material/Menu";
 import { AccountCircle, Logout, Settings } from "@mui/icons-material";
 import { ViewProfile } from "./User/viewProfile";
+import { ResponseToast } from "./responseToast";
+import { QueryResponse } from "../types/queryResponse";
 
 type NavButton = {
   url: string;
@@ -41,7 +49,8 @@ export const AppMenu = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [popperOpen, setPopperOpen] = useState<boolean>(false);
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [response, setResponse] = useState<QueryResponse | null>(null);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -53,30 +62,29 @@ export const AppMenu = () => {
   const handleLogout = async () => {
     user.removeUser();
     user.signoutRedirect({
-      post_logout_redirect_uri: getRedirectUriFromLogin()
+      post_logout_redirect_uri: getRedirectUriFromLogin(),
     });
-  }
+  };
 
   const navigateToProfile = () => {
-    navigate('/profile');
-  }
-
+    navigate("/profile");
+  };
 
   const onPopperClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
     setPopperOpen(!popperOpen);
-  }
+  };
 
   const onPopperClose = () => {
     setAnchorEl(null);
     setPopperOpen(false);
-  }
+  };
 
   const navigateToMenuItem = (menuItem: string) => {
     navigate(menuItem);
-  }
+  };
 
-  const id = popperOpen ? 'simple-popper' : undefined;
+  const id = popperOpen ? "simple-popper" : undefined;
 
   const [open, setOpen] = React.useState(false);
   const routes: NavButton[] = [
@@ -88,19 +96,24 @@ export const AppMenu = () => {
     {
       url: "/clients",
       text: "Clients",
-      icon: <GroupsIcon />
-    }
+      icon: <GroupsIcon />,
+    },
   ];
   const location = useLocation();
   return (
     <Box sx={{ display: "flex" }}>
+      <ResponseToast response={response} />
       <CssBaseline />
-      <AppBar sx={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center"
-      }} position="fixed" open={open}>
+      <AppBar
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+        position="fixed"
+        open={open}
+      >
         <Menu
           anchorEl={anchorEl}
           id="account-menu"
@@ -110,33 +123,32 @@ export const AppMenu = () => {
           PaperProps={{
             elevation: 0,
             sx: {
-              overflow: 'visible',
-              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
               mt: 1.5,
-              '& .MuiAvatar-root': {
+              "& .MuiAvatar-root": {
                 width: 32,
                 height: 32,
                 ml: -0.5,
                 mr: 1,
               },
-              '&::before': {
+              "&::before": {
                 content: '""',
-                display: 'block',
-                position: 'absolute',
+                display: "block",
+                position: "absolute",
                 top: 0,
                 right: 14,
                 width: 10,
                 height: 10,
-                bgcolor: 'background.paper',
-                transform: 'translateY(-50%) rotate(45deg)',
+                bgcolor: "background.paper",
+                transform: "translateY(-50%) rotate(45deg)",
                 zIndex: 0,
               },
             },
           }}
-          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         >
-
           <MenuList>
             <MenuItem>
               <Avatar /> Profile
@@ -155,7 +167,6 @@ export const AppMenu = () => {
               Logout
             </MenuItem>
           </MenuList>
-
         </Menu>
         <Toolbar>
           <IconButton
@@ -176,9 +187,7 @@ export const AppMenu = () => {
           </Typography>
         </Toolbar>
         <Avatar sx={{ marginRight: "1rem" }}>
-          <IconButton
-            onClick={onPopperClick}
-          >
+          <IconButton onClick={onPopperClick}>
             <AccountCircle></AccountCircle>
           </IconButton>
         </Avatar>
@@ -197,29 +206,29 @@ export const AppMenu = () => {
         <List>
           {routes.map((route) => (
             <ListItem key={route.text} disablePadding sx={{ display: "block" }}>
-                <ListItemButton
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+                selected={route.url === "/" + location.pathname.split("/")[1]}
+                onClick={() => navigateToMenuItem(route.url)}
+              >
+                <ListItemIcon
                   sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
                   }}
-                  selected={route.url === '/' + location.pathname.split('/')[1]}
-                  onClick={() => navigateToMenuItem(route.url)}
                 >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    {route.icon}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={route.text}
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
+                  {route.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={route.text}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
             </ListItem>
           ))}
         </List>
@@ -227,10 +236,16 @@ export const AppMenu = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
         <Routes>
-          <Route path="/invoices" element={<InvoiceGrid />} />
+          <Route
+            path="/invoices"
+            element={<InvoiceGrid setResponse={setResponse} />}
+          />
           <Route path="/invoices/:id" element={<InvoiceView />} />
           <Route path="/clients" element={<ClientsGrid />} />
-          <Route path="/profile" element={<ViewProfile></ViewProfile>} />
+          <Route
+            path="/profile"
+            element={<ViewProfile setResponse={setResponse}></ViewProfile>}
+          />
           <Route path="*" element={<Navigate to="/invoices" />} />
         </Routes>
       </Box>

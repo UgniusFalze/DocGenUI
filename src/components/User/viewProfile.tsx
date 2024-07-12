@@ -13,17 +13,16 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useEditUser, useUserProfile } from "../../utils/apiService";
 import { UserForm } from "../../types/user";
 import { useAuth } from "react-oidc-context";
-import { SuccessToast } from "../toasts/SuccessToast";
-import { useEffect, useState } from "react";
 import { getLoginServiceUrl } from "../../utils/envProvider";
-import { ErrorToast } from "../toasts/ErrorToast";
+import { QueryResponse } from "../../types/queryResponse";
+import { useEffect } from "react";
 
-export const ViewProfile = () => {
+export const ViewProfile = (props: {
+  setResponse: (response: QueryResponse) => void;
+}) => {
   const user = useAuth();
   const formMutation = useEditUser(user.user?.access_token);
   const userProfile = useUserProfile(user.user!.access_token);
-  const [successfullSubmit, setSuccessfullSubmit] = useState<boolean>(false);
-  const [hasError, setHasError] = useState<boolean>(false);
   const userRegisterForm = useForm<UserForm>({
     defaultValues: {
       address: "",
@@ -50,11 +49,12 @@ export const ViewProfile = () => {
 
   useEffect(() => {
     if (formMutation.isSuccess) {
-      setHasError(false);
-      setSuccessfullSubmit(true);
+      props.setResponse({ success: true, error: null });
     } else if (formMutation.isError) {
-      setSuccessfullSubmit(false);
-      setHasError(true);
+      props.setResponse({
+        success: false,
+        error: "Failed to save user settings",
+      });
     }
   }, [formMutation.isSuccess, formMutation.isError]);
 
@@ -65,11 +65,6 @@ export const ViewProfile = () => {
         alignItems: "center",
       }}
     >
-      <SuccessToast
-        open={successfullSubmit}
-        onClose={() => setSuccessfullSubmit(false)}
-      />
-      <ErrorToast open={hasError} />
       <Stack
         sx={{
           height: "min-content",
