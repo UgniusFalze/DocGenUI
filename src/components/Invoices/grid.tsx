@@ -13,10 +13,11 @@ import {
 import { useAuth } from "react-oidc-context";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InvoiceFormModal } from "./Form/invoiceFormModal";
 import { Box, Checkbox, CircularProgress, Typography } from "@mui/material";
 import {
+  useCountGridInvoices,
   useGetInvoicesGrid,
   useGetSeriesNumber,
   useSetInvoicePayed,
@@ -26,8 +27,11 @@ import { HandleDownload } from "../../utils/documentsCrud";
 import { useNavigate } from "react-router-dom";
 import { GridModal } from "../modals/gridModal";
 import { InvoiceDeleteModal } from "./Form/InvoiceDeleteModal";
+import { QueryResponse } from "../../types/queryResponse";
 
-export default function InvoiceGrid() {
+export default function InvoiceGrid(props: {
+  setResponse: (response: QueryResponse | null) => void;
+}) {
   const user = useAuth();
   const navigate = useNavigate();
   const [downloadGridIcon, setDownloadGridIcon] = useState<JSX.Element>(
@@ -41,10 +45,23 @@ export default function InvoiceGrid() {
     pageSize: 10,
   });
 
-  const { isFetching, data, refetch } = useGetInvoicesGrid(
+  const { isFetching, data, refetch, error } = useGetInvoicesGrid(
     user.user!.access_token,
     paginationModel.page,
   );
+
+  const { data: invoicesCount, refect: refectCount } = useCountGridInvoices(
+    user.user!.access_token,
+  );
+
+  useEffect(() => {
+    if (error) {
+      props.setResponse({
+        success: false,
+        error: "Failed to retrieve invoices",
+      });
+    }
+  }, [error]);
 
   const RenderCheckbox = (
     props: GridRenderCellParams<GridValidRowModel, boolean>,
@@ -172,6 +189,7 @@ export default function InvoiceGrid() {
 
   const refetchData = () => {
     refetch();
+    refectCount();
   };
 
   return (
@@ -199,6 +217,7 @@ export default function InvoiceGrid() {
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           paginationMode="server"
+          rowCount={invoicesCount ?? 0}
         />
       </div>
       <Fab

@@ -156,9 +156,6 @@ export const useEditClient = (jwt: string, id: number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clientQuery"] });
     },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 };
 
@@ -175,9 +172,6 @@ export const useDeleteClient = (jwt: string, id: number) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clientQuery"] });
     },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 };
 
@@ -193,9 +187,6 @@ export const useDeleteInvoice = (jwt: string, id: number) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoicesGrid"] });
-    },
-    onError: (error) => {
-      console.error(error);
     },
   });
 };
@@ -218,9 +209,6 @@ export const useAddPost = (jwt: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoicesGrid"] });
       queryClient.invalidateQueries({ queryKey: ["latestSeriesNumber"] });
-    },
-    onError: (error) => {
-      console.error(error);
     },
   });
 };
@@ -334,9 +322,6 @@ export const useEditUser = (jwt: string | undefined) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 };
 
@@ -355,9 +340,6 @@ export const useAddInvoiceItem = (
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoice", invoiceId, jwt] });
-    },
-    onError: (error) => {
-      console.error(error);
     },
   });
 };
@@ -382,9 +364,6 @@ export const useSetInvoicePayed = (
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoice", invoiceId, jwt] });
     },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 };
 
@@ -408,9 +387,6 @@ export const useDeleteInvoiceItem = (
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["invoice", invoiceId, jwt] });
     },
-    onError: (error) => {
-      console.error(error);
-    },
   });
 };
 
@@ -425,6 +401,25 @@ export const useGetInvoicesGrid = (jwt: string | undefined, page: number) => {
           },
           params: {
             page: page,
+          },
+        })
+        .then((result) => {
+          return result.data;
+        })
+        .catch((error) => Promise.reject(error));
+    },
+    placeholderData: keepPreviousData,
+  });
+};
+
+export const useCountGridInvoices = (jwt: string | undefined) => {
+  return useQuery({
+    queryKey: ["invoicesGridCount"],
+    queryFn: () => {
+      return axios
+        .get<number>(invoicesUrl + "/count", {
+          headers: {
+            Authorization: "Bearer " + jwt,
           },
         })
         .then((result) => {
