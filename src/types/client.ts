@@ -1,15 +1,15 @@
 export type ClientSelect = {
-    clientId: number,
-    clientName: string
-}
+  id: number;
+  label: string;
+};
 
 export type ClientForm = {
-    buyerName: string,
-    buyerAddress: string,
-    buyerCode: string
-    vatCode: string|null
-}
+  buyerName: string;
+  buyerAddress: string;
+  buyerCode: string;
+  vatCode: string | null;
+};
 
 export type ClientGridRow = ClientForm & {
-    clientId: number
-}
+  clientId: number;
+};

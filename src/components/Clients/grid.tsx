@@ -1,18 +1,40 @@
-import { DataGrid, GridActionsCellItem, GridColDef, GridEventListener, GridPaginationModel, useGridApiRef } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColDef,
+  GridEventListener,
+  GridFilterModel,
+  GridPaginationModel,
+  GridToolbarQuickFilter,
+  useGridApiRef,
+} from "@mui/x-data-grid";
 import { useAuth } from "react-oidc-context";
 import { useCountGridClients, useGetGridClients } from "../../utils/apiService";
-import {
-  Box,
-  Fab,
-  Typography,
-} from "@mui/material";
+import { Box, Fab, Typography } from "@mui/material";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { ClientFormModal } from "./Form/clientsFormModal";
 import { GridModal } from "../modals/gridModal";
 import { ClientEditFormModal } from "./Form/clientEditFormModal";
-import { Delete, WarningOutlined} from "@mui/icons-material";
+import { Delete, WarningOutlined } from "@mui/icons-material";
 import { ClientDeleteModal } from "./Form/clientDeleteModal";
+import { GridQueryOptions } from "../../types/gridQueryOptions";
+
+const QuickSearchToolbar = (): JSX.Element => {
+  return (
+    <Box
+      sx={{
+        p: 0.5,
+        pb: 0,
+      }}
+    >
+      <GridToolbarQuickFilter
+        debounceMs={200}
+        placeholder="Search By Name..."
+      />
+    </Box>
+  );
+};
 
 export const ClientsGrid = () => {
   const apiRef = useGridApiRef();
@@ -21,11 +43,20 @@ export const ClientsGrid = () => {
     page: 0,
     pageSize: 10,
   });
-  const { isFetching, data, refetch } = useGetGridClients(user.user?.access_token, paginationModel.page);
-  const { data: gridCount, refetch: refetchCount} = useCountGridClients(user.user?.access_token);
+  const [gridQueryOptions, setGridQueryOptions] = useState<GridQueryOptions>({
+    paging: null,
+    searching: null,
+  });
+  const { isFetching, data, refetch } = useGetGridClients(
+    user.user?.access_token,
+    gridQueryOptions,
+  );
+  const { data: gridCount, refetch: refetchCount } = useCountGridClients(
+    user.user?.access_token,
+  );
   const [gridModal, setGridModal] = useState<JSX.Element | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [modalTitle, setModalTitle] = useState<string|JSX.Element>("");
+  const [modalTitle, setModalTitle] = useState<string | JSX.Element>("");
   const columns: GridColDef[] = [
     { field: "clientId", headerName: "ID", width: 70 },
     { field: "buyerName", headerName: "Client's Name", flex: 0.5 },
@@ -38,7 +69,9 @@ export const ClientsGrid = () => {
         <GridActionsCellItem
           icon={<Delete />}
           label="DeleteItem"
-          onClick={() => handleClientDeleteModalOpen(Number.parseInt(params.id.toString()))}
+          onClick={() =>
+            handleClientDeleteModalOpen(Number.parseInt(params.id.toString()))
+          }
         />,
       ],
     },
@@ -53,28 +86,62 @@ export const ClientsGrid = () => {
 
   const handleFormModalOpen = () => {
     setModalTitle("Add Client");
-    setGridModal(<ClientFormModal closeModal={handleModalClose} addClient={refetchData}></ClientFormModal>);
+    setGridModal(
+      <ClientFormModal
+        closeModal={handleModalClose}
+        addClient={refetchData}
+      ></ClientFormModal>,
+    );
     setIsModalOpen(true);
   };
 
-  const handleClientEditFormModal :GridEventListener<"rowClick"> = (data) => {
+  const handleClientEditFormModal: GridEventListener<"rowClick"> = (data) => {
     const id = Number.parseInt(data.id.toString());
     setModalTitle("Edit Client");
-    setGridModal(<ClientEditFormModal  closeModal={handleModalClose} clientId={id} updateClient={apiRef.current.updateRows}></ClientEditFormModal>);
+    setGridModal(
+      <ClientEditFormModal
+        closeModal={handleModalClose}
+        clientId={id}
+        updateClient={apiRef.current.updateRows}
+      ></ClientEditFormModal>,
+    );
     setIsModalOpen(true);
   };
 
   const handleClientDeleteModalOpen = (id: number) => {
-    setModalTitle(<Box width={"100%"} display={"flex"} justifyContent={"center"} alignItems={"center"}><WarningOutlined fontSize="large"></WarningOutlined></Box>);
-    setGridModal(<ClientDeleteModal handleModalClose={handleModalClose} id={id} updateClient={refetchData}></ClientDeleteModal>);
+    setModalTitle(
+      <Box
+        width={"100%"}
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <WarningOutlined fontSize="large"></WarningOutlined>
+      </Box>,
+    );
+    setGridModal(
+      <ClientDeleteModal
+        handleModalClose={handleModalClose}
+        id={id}
+        updateClient={refetchData}
+      ></ClientDeleteModal>,
+    );
     setIsModalOpen(true);
-  }
+  };
+
+  const onFilterChange = (model: GridFilterModel) => {
+    setGridQueryOptions({ ...gridQueryOptions, searching: model });
+  };
+
+  const onPageChange = (model: GridPaginationModel) => {
+    setGridQueryOptions({ ...gridQueryOptions, paging: model });
+    setPaginationModel(model);
+  };
 
   const refetchData = () => {
     refetchCount();
     refetch();
-  }
-
+  };
 
   return (
     <div>
@@ -90,8 +157,9 @@ export const ClientsGrid = () => {
           Clients
         </Typography>
         <DataGrid
-          apiRef={apiRef} 
+          apiRef={apiRef}
           disableRowSelectionOnClick
+          disableColumnFilter
           autoHeight
           onRowClick={handleClientEditFormModal}
           rows={data ?? []}
@@ -100,9 +168,16 @@ export const ClientsGrid = () => {
           loading={isFetching}
           rowCount={gridCount ?? 0}
           paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
+          onPaginationModelChange={onPageChange}
           paginationMode="server"
-
+          slots={{ toolbar: QuickSearchToolbar }}
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+            },
+          }}
+          filterMode="server"
+          onFilterModelChange={onFilterChange}
         />
       </div>
       <Fab
