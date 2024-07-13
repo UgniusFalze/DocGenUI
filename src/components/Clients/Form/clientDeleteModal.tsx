@@ -3,11 +3,13 @@ import { useDeleteClient } from "../../../utils/apiService";
 import { Alert, Button, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { LoadingButton } from "@mui/lab";
+import { QueryResponse } from "../../../types/queryResponse";
 
 export const ClientDeleteModal = (props: {
   id: number;
   handleModalClose: () => void;
   updateClient: () => void;
+  setResponse: (response: QueryResponse | null) => void;
 }) => {
   const auth = useAuth();
   const [isLoadingButton, setIsLoadingButton] = useState(false);
@@ -22,8 +24,24 @@ export const ClientDeleteModal = (props: {
     if (deleteMutation.isSuccess) {
       props.updateClient();
       props.handleModalClose();
+      props.setResponse(null);
+    } else if (deleteMutation.isError) {
+      setIsLoadingButton(false);
+      if (deleteMutation.error.response?.status === 422) {
+        props.setResponse({
+          success: false,
+          error: (deleteMutation.error.response?.data as string) ?? null,
+          isUserError: true,
+        });
+      } else {
+        props.setResponse({
+          success: false,
+          error: "Server Error",
+          isUserError: false,
+        });
+      }
     }
-  }, [deleteMutation.isSuccess]);
+  }, [deleteMutation.isSuccess, deleteMutation.isError]);
 
   return (
     <Grid container gap={"1rem"}>
