@@ -8,12 +8,14 @@ export const GridModal = (props: {
   title: string | JSX.Element;
   modalContent: JSX.Element | null;
 }) => {
-
-  const handleCloseEvent = (_event: object, reason: "backdropClick" | "escapeKeyDown") => {
-    if(reason === "escapeKeyDown"){
+  const handleCloseEvent = (
+    _event: object,
+    reason: "backdropClick" | "escapeKeyDown",
+  ) => {
+    if (reason === "escapeKeyDown") {
       props.handleModalClose();
     }
-  }
+  };
 
   return (
     <Dialog
@@ -22,25 +24,23 @@ export const GridModal = (props: {
       onClose={handleCloseEvent}
       open={props.isModalOpen}
       TransitionProps={{
-        onExited: () => props.handleContentClose()
+        onExited: () => props.handleContentClose(),
       }}
     >
       <DialogTitle>{props.title}</DialogTitle>
       <IconButton
-          aria-label="close"
-          onClick={props.handleModalClose}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8
-          }}
-        >
-          <GridCloseIcon />
-        </IconButton>
-      <DialogContent dividers>
-        {props.modalContent}
-      </DialogContent>
+        aria-label="close"
+        onClick={props.handleModalClose}
+        sx={{
+          position: "absolute",
+          right: 8,
+          top: 8,
+        }}
+      >
+        <GridCloseIcon />
+      </IconButton>
+      <DialogContent dividers>{props.modalContent}</DialogContent>
     </Dialog>
   );
 };
-``
+``;

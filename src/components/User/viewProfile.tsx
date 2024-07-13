@@ -49,11 +49,12 @@ export const ViewProfile = (props: {
 
   useEffect(() => {
     if (formMutation.isSuccess) {
-      props.setResponse({ success: true, error: null });
+      props.setResponse({ success: true, error: null, isUserError: false });
     } else if (formMutation.isError) {
       props.setResponse({
         success: false,
         error: "Failed to save user settings",
+        isUserError: false,
       });
     }
   }, [formMutation.isSuccess, formMutation.isError]);

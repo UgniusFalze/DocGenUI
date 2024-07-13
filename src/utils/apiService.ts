@@ -6,7 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { ClientForm, ClientGridRow, ClientSelect } from "../types/client";
 import { apiUrl, clientsUrl, invoicesUrl, userUrl } from "./apiUrl";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Invoice, InvoiceForm, InvoiceGrid } from "../types/invoice";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
@@ -171,6 +171,9 @@ export const useDeleteClient = (jwt: string, id: number) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clientQuery"] });
+    },
+    onError: (error: AxiosError) => {
+      Promise.reject(error.response?.data);
     },
   });
 };

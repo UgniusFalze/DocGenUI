@@ -66,6 +66,12 @@ export const AppMenu = () => {
     });
   };
 
+  const setResponseFromComponents = (queryResponse: QueryResponse | null) => {
+    if (response === null) {
+      setResponse(queryResponse);
+    }
+  };
+
   const navigateToProfile = () => {
     navigate("/profile");
   };
@@ -102,7 +108,10 @@ export const AppMenu = () => {
   const location = useLocation();
   return (
     <Box sx={{ display: "flex" }}>
-      <ResponseToast response={response} />
+      <ResponseToast
+        response={response}
+        clearResponse={() => setResponse(null)}
+      />
       <CssBaseline />
       <AppBar
         sx={{
@@ -238,13 +247,20 @@ export const AppMenu = () => {
         <Routes>
           <Route
             path="/invoices"
-            element={<InvoiceGrid setResponse={setResponse} />}
+            element={<InvoiceGrid setResponse={setResponseFromComponents} />}
           />
           <Route path="/invoices/:id" element={<InvoiceView />} />
-          <Route path="/clients" element={<ClientsGrid />} />
+          <Route
+            path="/clients"
+            element={<ClientsGrid setResponse={setResponseFromComponents} />}
+          />
           <Route
             path="/profile"
-            element={<ViewProfile setResponse={setResponse}></ViewProfile>}
+            element={
+              <ViewProfile
+                setResponse={setResponseFromComponents}
+              ></ViewProfile>
+            }
           />
           <Route path="*" element={<Navigate to="/invoices" />} />
         </Routes>

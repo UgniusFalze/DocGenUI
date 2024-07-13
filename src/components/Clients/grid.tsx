@@ -19,6 +19,7 @@ import { ClientEditFormModal } from "./Form/clientEditFormModal";
 import { Delete, WarningOutlined } from "@mui/icons-material";
 import { ClientDeleteModal } from "./Form/clientDeleteModal";
 import { GridQueryOptions } from "../../types/gridQueryOptions";
+import { QueryResponse } from "../../types/queryResponse";
 
 const QuickSearchToolbar = (): JSX.Element => {
   return (
@@ -36,7 +37,9 @@ const QuickSearchToolbar = (): JSX.Element => {
   );
 };
 
-export const ClientsGrid = () => {
+export const ClientsGrid = (props: {
+  setResponse: (response: QueryResponse | null) => void;
+}) => {
   const apiRef = useGridApiRef();
   const user = useAuth();
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -121,6 +124,7 @@ export const ClientsGrid = () => {
     );
     setGridModal(
       <ClientDeleteModal
+        setResponse={props.setResponse}
         handleModalClose={handleModalClose}
         id={id}
         updateClient={refetchData}

@@ -55,13 +55,14 @@ export default function InvoiceGrid(props: {
   );
 
   useEffect(() => {
-    if (error) {
+    if (isFetching === false && error) {
       props.setResponse({
         success: false,
         error: "Failed to retrieve invoices",
+        isUserError: false,
       });
     }
-  }, [error]);
+  }, [error, isFetching]);
 
   const RenderCheckbox = (
     props: GridRenderCellParams<GridValidRowModel, boolean>,
