@@ -26,7 +26,10 @@ export const ResponseToast = (props: {
       <ErrorToast
         open={isOpen}
         message={props?.response?.error ?? null}
-        onClose={() => setIsOpen(false)}
+        onClose={() => {
+          props.clearResponse();
+          setIsOpen(false);
+        }}
       />
     ) : (
       <ErrorModal
@@ -37,6 +40,12 @@ export const ResponseToast = (props: {
       />
     )
   ) : (
-    <SuccessToast open={isOpen} onClose={() => setIsOpen(false)} />
+    <SuccessToast
+      open={isOpen}
+      onClose={() => {
+        setIsOpen(false);
+        props.clearResponse();
+      }}
+    />
   );
 };

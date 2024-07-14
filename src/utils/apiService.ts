@@ -216,6 +216,9 @@ export const useAddPost = (jwt: string) => {
       queryClient.invalidateQueries({ queryKey: ["invoicesGrid"] });
       queryClient.invalidateQueries({ queryKey: ["latestSeriesNumber"] });
     },
+    onError: (error: AxiosError) => {
+      Promise.reject(error);
+    },
   });
 };
 

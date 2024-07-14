@@ -67,7 +67,7 @@ export const InvoiceItemInput = (props: {
         <Controller
           name="units"
           control={invoiceForm.control}
-          rules={{ required: true }}
+          rules={{ required: true, pattern: /^[0-9]*$/, min: 1 }}
           render={({ field }) => (
             <FormControl>
               <TextField
@@ -84,7 +84,7 @@ export const InvoiceItemInput = (props: {
         <Controller
           name="priceOfUnit"
           control={invoiceForm.control}
-          rules={{ required: true }}
+          rules={{ required: true, min: 1 }}
           render={({ field }) => (
             <FormControl>
               <TextField

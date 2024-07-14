@@ -104,7 +104,7 @@ export const RegisterForm = (props: {
               <Controller
                 name="personalId"
                 control={userRegisterForm.control}
-                rules={{ required: true }}
+                rules={{ required: true, pattern: /^[0-9]*$/, min: 1 }}
                 render={({ field }) => (
                   <FormControl>
                     <TextField
@@ -112,6 +112,7 @@ export const RegisterForm = (props: {
                       error={!!userRegisterForm.formState.errors.personalId}
                       label="National Identification Number"
                       variant="outlined"
+                      inputProps={{ type: "number" }}
                     />
                   </FormControl>
                 )}
@@ -119,7 +120,7 @@ export const RegisterForm = (props: {
               <Controller
                 name="freelanceWorkId"
                 control={userRegisterForm.control}
-                rules={{ required: true }}
+                rules={{ required: true, pattern: /^[0-9]*$/, min: 1 }}
                 render={({ field }) => (
                   <FormControl>
                     <TextField
@@ -129,6 +130,7 @@ export const RegisterForm = (props: {
                       }
                       label="Freeelance Work Id"
                       variant="outlined"
+                      inputProps={{ type: "number" }}
                     />
                   </FormControl>
                 )}
