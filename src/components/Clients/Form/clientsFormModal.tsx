@@ -38,7 +38,16 @@ export const ClientFormModal = (props: {
       props.closeModal();
     } else if (formMutation.isError) {
       setIsLoadingButton(false);
-      setHasError(true);
+      if (formMutation.error.response?.status === 422) {
+        clientForm.setError("buyerCode", {
+          type: "custom",
+          message:
+            (formMutation.error.response.data as string) ??
+            "Client code already exists",
+        });
+      } else {
+        setHasError(true);
+      }
     }
   }, [formMutation.isSuccess, formMutation.isError]);
 
@@ -97,6 +106,9 @@ export const ClientFormModal = (props: {
                   label="Client's registration code"
                   error={!!clientForm.formState.errors.buyerCode}
                   variant="outlined"
+                  helperText={
+                    clientForm.formState.errors.buyerCode?.message ?? ""
+                  }
                   fullWidth
                 />
               </FormControl>
