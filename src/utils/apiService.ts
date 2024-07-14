@@ -140,6 +140,9 @@ export const useAddClient = (jwt: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["clientQuery"] });
     },
+    onError: (error: AxiosError) => {
+      Promise.reject(error.response?.data);
+    },
   });
 };
 
