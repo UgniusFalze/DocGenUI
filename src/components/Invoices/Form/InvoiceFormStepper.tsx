@@ -66,6 +66,16 @@ export default function InvoiceFormStepper(props: {
       props.closeModal();
     } else if (formMutation.isError) {
       setButtonLoading(false);
+      if (formMutation.error.response?.status === 422) {
+        invoiceForm.setError("seriesNumber", {
+          type: "custom",
+          message:
+            (formMutation.error.response.data as string) ??
+            "Invoice with series number already exists",
+        });
+
+        setActiveStep(0);
+      }
     }
   }, [formMutation.isSuccess, formMutation.isError]);
 

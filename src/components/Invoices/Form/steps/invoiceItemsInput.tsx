@@ -8,9 +8,7 @@ import { InvoiceForm } from "../../../../types/invoice";
 import { FormControl, IconButton, Stack, TextField } from "@mui/material";
 import { AddCircle, RemoveCircle } from "@mui/icons-material";
 
-export const InvoiceItemInput = (props: {
-  control: Control<InvoiceForm>;
-}) => {
+export const InvoiceItemInput = (props: { control: Control<InvoiceForm> }) => {
   const { fields, append, remove } = useFieldArray({
     control: props.control,
     name: "items",
@@ -58,7 +56,7 @@ export const InvoiceItemInput = (props: {
           />
           <Stack direction="row" spacing={2}>
             <Controller
-              rules={{ required: true, pattern:/^[0-9]*$/ }}
+              rules={{ required: true, pattern: /^[0-9]*$/, min: 1 }}
               render={({ field }) => (
                 <FormControl>
                   <TextField
@@ -74,13 +72,15 @@ export const InvoiceItemInput = (props: {
               control={props.control}
             />
             <Controller
-              rules={{ required: true }}
+              rules={{ required: true, min: 1 }}
               render={({ field }) => (
                 <FormControl>
                   <TextField
                     {...field}
                     error={!!formState.errors.items?.[index]?.priceOfUnit}
-                    helperText = {!!formState.errors.items?.[index]?.priceOfUnit?.message}
+                    helperText={
+                      !!formState.errors.items?.[index]?.priceOfUnit?.message
+                    }
                     inputProps={{ type: "number" }}
                     label="Price"
                     variant="outlined"

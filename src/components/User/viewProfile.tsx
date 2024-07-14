@@ -114,8 +114,8 @@ export const ViewProfile = (props: {
                     />
                     <Controller
                       name="personalId"
+                      rules={{ required: true, pattern: /^[0-9]*$/, min: 1 }}
                       control={userRegisterForm.control}
-                      rules={{ required: true }}
                       render={({ field }) => (
                         <FormControl>
                           <TextField
@@ -125,14 +125,15 @@ export const ViewProfile = (props: {
                             }
                             label="National Identification Number"
                             variant="outlined"
+                            inputProps={{ type: "number" }}
                           />
                         </FormControl>
                       )}
                     />
                     <Controller
                       name="freelanceWorkId"
+                      rules={{ required: true, pattern: /^[0-9]*$/, min: 1 }}
                       control={userRegisterForm.control}
-                      rules={{ required: true }}
                       render={({ field }) => (
                         <FormControl>
                           <TextField
@@ -143,6 +144,7 @@ export const ViewProfile = (props: {
                             }
                             label="Freeelance Work Id"
                             variant="outlined"
+                            inputProps={{ type: "number" }}
                           />
                         </FormControl>
                       )}
