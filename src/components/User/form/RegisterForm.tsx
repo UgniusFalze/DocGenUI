@@ -29,6 +29,7 @@ export const RegisterForm = (props: {
       freelanceWorkId: "",
       bankNumber: "",
       bankName: "",
+      vatCode: "",
     },
   });
 
@@ -164,6 +165,21 @@ export const RegisterForm = (props: {
                     />
                   </FormControl>
                 )}
+              />
+              <Controller
+                name="vatCode"
+                render={({ field }) => (
+                  <FormControl>
+                    <TextField
+                      {...field}
+                      label="VAT code (optional)"
+                      variant="outlined"
+                      error={!!userRegisterForm.formState.errors.vatCode}
+                      fullWidth
+                    />
+                  </FormControl>
+                )}
+                control={userRegisterForm.control}
               />
               <LoadingButton
                 loading={isLoadingButton}

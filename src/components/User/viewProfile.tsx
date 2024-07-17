@@ -30,6 +30,7 @@ export const ViewProfile = (props: {
       freelanceWorkId: "",
       bankNumber: "",
       bankName: "",
+      vatCode: "",
     },
     values: userProfile.data,
     mode: "onChange",
@@ -180,6 +181,21 @@ export const ViewProfile = (props: {
                           />
                         </FormControl>
                       )}
+                    />
+                    <Controller
+                      name="vatCode"
+                      render={({ field }) => (
+                        <FormControl>
+                          <TextField
+                            {...field}
+                            label="VAT code (optional)"
+                            variant="outlined"
+                            error={!!userRegisterForm.formState.errors.vatCode}
+                            fullWidth
+                          />
+                        </FormControl>
+                      )}
+                      control={userRegisterForm.control}
                     />
                     <ButtonGroup
                       variant="text"
