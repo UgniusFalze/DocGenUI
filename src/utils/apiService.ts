@@ -7,7 +7,13 @@ import {
 import { ClientForm, ClientGridRow, ClientSelect } from "../types/client";
 import { apiUrl, clientsUrl, invoicesUrl, userUrl } from "./apiUrl";
 import axios, { AxiosError } from "axios";
-import { Invoice, InvoiceForm, InvoiceGrid } from "../types/invoice";
+import {
+  Invoice,
+  InvoiceForm,
+  InvoiceGrid,
+  ShortInvoiceGet,
+  ShortInvoicePost,
+} from "../types/invoice";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { UserForm, UserProfile } from "../types/user";
@@ -197,6 +203,35 @@ export const useDeleteInvoice = (jwt: string, id: number) => {
   });
 };
 
+export const useUpdateInvoice = (jwt: string, id: number) => {
+  const queryClient = useQueryClient();
+  const url = invoicesUrl + "/" + id;
+  return useMutation({
+    mutationFn: (changes: ShortInvoicePost) => {
+      dayjs.extend(utc);
+      return axios.put(
+        url,
+        {
+          ...changes,
+          invoiceDate: changes.invoiceDate.utc().format(),
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + jwt,
+          },
+        },
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["invoicesGrid"] });
+      queryClient.invalidateQueries({ queryKey: ["latestSeriesNumber"] });
+    },
+    onError: (error: AxiosError) => {
+      Promise.reject("Failed to update invoice with code: " + error.status);
+    },
+  });
+};
+
 export const useAddPost = (jwt: string) => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -270,7 +305,7 @@ export const useAddUser = (jwt: string | undefined) => {
 
 export const useGetInvoice = (
   jwt: string | undefined,
-  invoiceId: string | undefined,
+  invoiceId: number | string | undefined,
 ) => {
   const url = invoicesUrl + "/" + invoiceId;
   return useQuery({
@@ -296,6 +331,28 @@ export const useGetInvoice = (
           };
         })
         .catch((error) => Promise.reject(error));
+    },
+  });
+};
+
+export const useGetShortInvoice = (jwt: string, invoiceId: number | null) => {
+  const url = invoicesUrl + "/shortInvoice/" + invoiceId;
+  return useQuery({
+    queryKey: ["shortInvoice", invoiceId, jwt],
+    queryFn: () => {
+      return axios
+        .get<ShortInvoiceGet>(url, {
+          headers: { Authorization: "Bearer " + jwt },
+        })
+        .then<ShortInvoicePost>((result) => {
+          return {
+            ...result.data,
+            invoiceDate: dayjs(result.data.invoiceDate),
+          };
+        })
+        .catch((error: AxiosError) =>
+          Promise.reject("Failed to retrieve invoice from api " + error.status),
+        );
     },
   });
 };
