@@ -7,7 +7,7 @@ import { LoadingAuth } from "../loadingAuth";
 
 const queryClient = new QueryClient();
 export function withFinishedRegistration<T extends JSX.IntrinsicAttributes>(
-  Component: React.ComponentType<T>
+  Component: React.ComponentType<T>,
 ) {
   return (props: T) => {
     const auth = useAuth();
@@ -18,10 +18,10 @@ export function withFinishedRegistration<T extends JSX.IntrinsicAttributes>(
         setIsValid(valid);
         setIsLoading(false);
       });
-    }, []);
+    }, [auth.user?.access_token]);
 
     if (isLoading) {
-      return <LoadingAuth/>;
+      return <LoadingAuth />;
     } else {
       if (isValid) {
         return (

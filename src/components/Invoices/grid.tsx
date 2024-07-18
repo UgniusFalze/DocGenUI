@@ -28,6 +28,8 @@ import { useNavigate } from "react-router-dom";
 import { GridModal } from "../modals/gridModal";
 import { InvoiceDeleteModal } from "./Form/InvoiceDeleteModal";
 import { QueryResponse } from "../../types/queryResponse";
+import EditIcon from "@mui/icons-material/Edit";
+import { InvoiceEditModal } from "./Form/invoiceEditModal";
 
 export default function InvoiceGrid(props: {
   setResponse: (response: QueryResponse | null) => void;
@@ -135,9 +137,14 @@ export default function InvoiceGrid(props: {
           onClick={() => onClick(params.id)}
         />,
         <GridActionsCellItem
+          icon={<EditIcon />}
+          label="Edit Invoice"
+          onClick={() => handleInvoiceEditModalOpen(params.id)}
+        />,
+        <GridActionsCellItem
           icon={<GridDeleteIcon />}
           label="Delete Invoice"
-          onClick={() => handleClientDeleteModalOpen(params.id)}
+          onClick={() => handleInvoiceDeleteModalOpen(params.id)}
         />,
       ],
     },
@@ -166,7 +173,7 @@ export default function InvoiceGrid(props: {
     setGridModal(null);
   };
 
-  const handleClientDeleteModalOpen = (id: GridRowId) => {
+  const handleInvoiceDeleteModalOpen = (id: GridRowId) => {
     const parsedId = Number.parseInt(id.toString());
     setModalTitle(
       <Box
@@ -184,6 +191,19 @@ export default function InvoiceGrid(props: {
         id={parsedId}
         updateInvoices={refetchData}
       ></InvoiceDeleteModal>,
+    );
+    setModalOpen(true);
+  };
+
+  const handleInvoiceEditModalOpen = (id: GridRowId) => {
+    const parsedId = Number.parseInt(id.toString());
+    setModalTitle("Invoice Edit");
+    setGridModal(
+      <InvoiceEditModal
+        closeModal={handleModalClose}
+        invoiceId={parsedId}
+        updateInvoiceGrid={refetchData}
+      />,
     );
     setModalOpen(true);
   };
