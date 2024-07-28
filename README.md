@@ -1,6 +1,6 @@
 # DocGen
 
-Frontend application served by nginx reverse proxy to be used with [backend](https://gitlab.com/personal6195204/DocGen)
+Frontend application served by nginx reverse proxy to be used with [backend](https://github.com/UgniusFalze/DocGen)
 
 ## Requirements
 
