@@ -1,0 +1,17 @@
+name: Test
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    container:
+      image: node
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4.1.0
+      with:
+        fetch-depth: 20
+    - run: npm i eslint
+    - run: node_modules/eslint/bin/eslint.js .
