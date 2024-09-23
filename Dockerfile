@@ -11,5 +11,5 @@ COPY . .
 RUN npm run build
 
 # production stage
-FROM jonasal/nginx-certbot:latest
+FROM nginx
 COPY --from=build-stage /app/dist /usr/share/nginx/html
