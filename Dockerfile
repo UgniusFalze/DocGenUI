@@ -13,3 +13,4 @@ RUN npm run build
 # production stage
 FROM nginx
 COPY --from=build-stage /app/dist /usr/share/nginx/html
+CMD ["nginx", "-c", "/data/conf/nginx.conf"]
